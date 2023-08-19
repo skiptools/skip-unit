@@ -1,3 +1,4 @@
+name: skip-unit
 on:
   push:
     branches: '*'
