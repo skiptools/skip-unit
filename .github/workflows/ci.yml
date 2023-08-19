@@ -53,14 +53,12 @@ jobs:
           cp -a ${MODULE}/.build/${MODULE}/outputs/aar/${MODULE}-release.aar ${PKGDIR}/${PACKAGE}-${TAG}.aar
           zip -r ${PKGDIR}/${PACKAGE}-${TAG}-sources.zip . -x '.*' -x '.*/*' -x '*/.*/*'
 
+          # create a release with the assets and a checksums.txt file
           cd ${PKGDIR}
-
+          shasum -a 256 *.* > checksums.txt
           echo 'Release artifact SHA-256 hashes:' >> .relnotes
           echo '```' >> .relnotes
-          shasum -a 256 *.* >> .relnotes
           cat checksums.txt >> .relnotes
           echo '```' >> .relnotes
-
-          gh release create "${TAG}" --title "Release ${TAG}" -F .relnotes
-          gh release upload "${TAG}" -- *.*
+          gh release create "${TAG}" -t "Release ${TAG}" -F .relnotes *.*
 
