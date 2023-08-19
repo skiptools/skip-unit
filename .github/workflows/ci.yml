@@ -25,10 +25,6 @@ jobs:
         run: swift build
       - name: Test
         run: swift test
-      - name: Assemble
-        run: |
-          gradle assemble --project-dir Packages/Skip/skip-unit/SkipUnitKtTests/skip-transpiler -PbuildDir=.build/SkipUnit
-
       - name: Release
         if: startsWith(github.ref, 'refs/tags/')
         env:
@@ -38,12 +34,20 @@ jobs:
           PACKAGE="skip-unit"
           TAG="${GITHUB_REF#refs/tags/}"
 
+          gradle assemble --project-dir Packages/Skip/${PACKAGE}/${MODULE}KtTests/skip-transpiler -PbuildDir=.build/${MODULE}
+
           echo "Creating release: ${TAG}"
-
           mkdir -p Packages/Skip/artifacts/
-          cp -a ./.build/plugins/outputs/${PACKAGE}/${MODULE}KtTests/skip-transpiler/${MODULE}/.build/${MODULE}/outputs/aar/${MODULE}-release.aar Packages/Skip/artifacts/${PACKAGE}-${TAG}.aar
+          PKGDIR="../../../../../../Packages/Skip/artifacts/"
 
-          cd Packages/Skip/artifacts/
+          # copy the built release .aar
+          cd ./.build/plugins/outputs/${PACKAGE}/${MODULE}KtTests/skip-transpiler
+          cp -a ${MODULE}/.build/${MODULE}/outputs/aar/${MODULE}-release.aar ${PKGDIR}/${PACKAGE}-${TAG}.aar
+
+          # distribute the source jar as per GPL
+          zip -r ${PKGDIR}/${PACKAGE}-${TAG}-src.jar . -x '*/.*/*' -x '.*/*'
+
+          cd ${PKGDIR}
 
           shasum -a 256 *.* > checksums.txt
 
