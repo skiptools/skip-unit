@@ -1,9 +1,9 @@
-name: skiphub ci
+name: skip-unit ci
 
 on:
   push:
   schedule:
-    - cron:  '0 10 * * *'
+    - cron:  '0 10,20 * * *'
   workflow_dispatch:
   pull_request:
 
