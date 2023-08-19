@@ -25,13 +25,21 @@ jobs:
         run: swift build
       - name: Test
         run: swift test
+      - name: Assemble
+        run: |
+          brew install skiptools/skip/skip
+          skip version
+          #skip assemble -o Packages/Skip/artifacts/skip-unit-0.0.0.aar SkipUnit
       - name: Release
         if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          MODULE="SkipUnit"
-          PACKAGE="skip-unit"
+          # extract package and initial module name from Package.swift
+          PACKAGE=$(swift package dump-package | jq -r '.name')
+          MODULE=$(swift package dump-package | jq -r '.targets[0].name')
+
+          # the tag is the most recent GitHub ref
           TAG="${GITHUB_REF#refs/tags/}"
 
           gradle assemble --project-dir Packages/Skip/${PACKAGE}/${MODULE}KtTests/skip-transpiler -PbuildDir=.build/${MODULE}
@@ -40,24 +48,19 @@ jobs:
           mkdir -p Packages/Skip/artifacts/
           PKGDIR="../../../../../../Packages/Skip/artifacts/"
 
-          # copy the built release .aar
+          # create the release .aar and source .zip distribution
           cd ./.build/plugins/outputs/${PACKAGE}/${MODULE}KtTests/skip-transpiler
           cp -a ${MODULE}/.build/${MODULE}/outputs/aar/${MODULE}-release.aar ${PKGDIR}/${PACKAGE}-${TAG}.aar
           zip -r ${PKGDIR}/${PACKAGE}-${TAG}-sources.zip . -x '.*' -x '.*/*' -x '*/.*/*'
 
           cd ${PKGDIR}
 
-          shasum -a 256 *.* > checksums.txt
+          echo 'Release artifact SHA-256 hashes:' >> .relnotes
+          echo '```' >> .relnotes
+          shasum -a 256 *.* >> .relnotes
+          cat checksums.txt >> .relnotes
+          echo '```' >> .relnotes
 
-          cat > relnotes.md << EOF
-          These are the checksums for the release artifacts:
-          EOF
-
-          echo '```' >> relnotes.md
-          cat checksums.txt >> relnotes.md
-          echo '```' >> relnotes.md
-
-          gh release create "${TAG}" --title "Release ${TAG}" -F relnotes.md
-          rm relnotes.md
+          gh release create "${TAG}" --title "Release ${TAG}" -F .relnotes
           gh release upload "${TAG}" -- *.*
 
