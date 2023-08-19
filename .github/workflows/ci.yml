@@ -45,7 +45,7 @@ jobs:
           cp -a ${MODULE}/.build/${MODULE}/outputs/aar/${MODULE}-release.aar ${PKGDIR}/${PACKAGE}-${TAG}.aar
 
           # distribute the source jar as per GPL
-          zip -r ${PKGDIR}/${PACKAGE}-${TAG}-src.jar . -x '*/.*/*' -x '.*/*'
+          zip -r ${PKGDIR}/${PACKAGE}-${TAG}-sources.jar . -x '*/.*/*' -x '.*/*'
 
           cd ${PKGDIR}
 
