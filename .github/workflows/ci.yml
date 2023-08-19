@@ -34,18 +34,16 @@ jobs:
           PACKAGE="skip-unit"
           TAG="${GITHUB_REF#refs/tags/}"
 
-          gradle assemble --project-dir Packages/Skip/${PACKAGE}/${MODULE}KtTests/skip-transpiler -PbuildDir=.build/${MODULE}
+          gradle assemble --project-dir Packages/Skip/${PACKAGE}/${MODULE}Kt/skip-transpiler -PbuildDir=.build/${MODULE}
 
           echo "Creating release: ${TAG}"
           mkdir -p Packages/Skip/artifacts/
           PKGDIR="../../../../../../Packages/Skip/artifacts/"
 
           # copy the built release .aar
-          cd ./.build/plugins/outputs/${PACKAGE}/${MODULE}KtTests/skip-transpiler
+          cd ./.build/plugins/outputs/${PACKAGE}/${MODULE}Kt/skip-transpiler
           cp -a ${MODULE}/.build/${MODULE}/outputs/aar/${MODULE}-release.aar ${PKGDIR}/${PACKAGE}-${TAG}.aar
-
-          # distribute the source jar as per GPL
-          zip -r ${PKGDIR}/${PACKAGE}-${TAG}-sources.jar . -x '*/.*/*' -x '.*/*'
+          zip -r ${PKGDIR}/${PACKAGE}-${TAG}-sources.zip . -x '.*' -x '.*/*' -x '*/.*/*'
 
           cd ${PKGDIR}
 
