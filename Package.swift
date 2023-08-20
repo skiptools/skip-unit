@@ -14,7 +14,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "SkipUnit", dependencies: [.product(name: "SkipDrive", package: "skip")]),
-        .target(name: "SkipUnitKt", dependencies: ["SkipUnit"], resources: [.process("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
+        .target(name: "SkipUnitKt", resources: [.process("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
         .testTarget(name: "SkipUnitTests", dependencies: ["SkipUnit"]),
         .testTarget(name: "SkipUnitKtTests", dependencies: ["SkipUnitKt", "SkipUnit"], resources: [.process("Skip")], plugins: [.plugin(name: "transpile", package: "skip")]),
     ]
