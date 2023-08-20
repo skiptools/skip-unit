@@ -13,6 +13,7 @@ build:
         - 'id("com.android.library") version "8.1.0"'
 
     - block: 'dependencies'
+      export: false
       contents:
         # kotlin-bom specifies the default version of any subsequent Kotlin dependencies
         - 'implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.9.0"))'

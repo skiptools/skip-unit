@@ -5,7 +5,7 @@
 // as published by the Free Software Foundation https://fsf.org
 #if !SKIP
 #if canImport(SkipDrive)
-
+#if canImport(XCTest)
 import XCTest
 @_exported import SkipDrive
 
@@ -437,5 +437,6 @@ struct GradleBuildError : LocalizedError {
     var errorDescription: String?
 }
 
+#endif // canImport(XCTest)
 #endif // canImport(SkipDrive)
 #endif // !SKIP

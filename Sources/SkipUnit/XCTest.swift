@@ -7,7 +7,9 @@
 // SKIP SYMBOLFILE
 
 #if !SKIP
+#if canImport(XCTest)
 @_exported import XCTest
+#endif
 #else
 public func XCTAssert(_ a: Bool) {
 }
