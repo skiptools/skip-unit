@@ -10,7 +10,7 @@ let package = Package(
         .library(name: "SkipUnitKt", targets: ["SkipUnitKt"]),
     ],
     dependencies: [
-        .package(url: "https://source.skip.tools/skip.git", from: "0.6.8"),
+        .package(url: "https://source.skip.tools/skip.git", from: "0.6.11"),
     ],
     targets: [
         .target(name: "SkipUnit", dependencies: [.product(name: "SkipDrive", package: "skip")]),
