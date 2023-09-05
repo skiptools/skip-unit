@@ -35,7 +35,7 @@ extension XCGradleHarness where Self : XCTestCase {
     ///   - moduleSuffix: the expected module name for automatic test determination
     ///   - sourcePath: the full path to the test case call site, which is used to determine the package root
     @available(macOS 13, macCatalyst 16, iOS 16, tvOS 16, watchOS 8, *)
-    public func gradle(actions: [String], arguments: [String] = [], outputPrefix: String? = "GRADLE>", moduleName: String? = nil, moduleSuffix: String = "Kt", maxMemory: UInt64? = ProcessInfo.processInfo.physicalMemory, fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
+    public func gradle(actions: [String], arguments: [String] = [], pluginFolderName: String = "skipstone", outputPrefix: String? = "GRADLE>", moduleName: String? = nil, maxMemory: UInt64? = ProcessInfo.processInfo.physicalMemory, fromSourceFileRelativeToPackageRoot sourcePath: StaticString? = #file) async throws {
 
         var actions = actions
         let isTestAction = actions.contains(where: { $0.hasPrefix("test") })
@@ -48,8 +48,8 @@ extension XCGradleHarness where Self : XCTestCase {
             }
         }
 
-        let testModuleSuffix = moduleSuffix + "Tests"
-        let moduleSuffix = isTestAction ? testModuleSuffix : moduleSuffix
+        let testModuleSuffix = "Tests"
+        let moduleSuffix = isTestAction ? testModuleSuffix : ""
 
         if #unavailable(macOS 13, macCatalyst 16) {
             fatalError("unsupported platform")
@@ -66,7 +66,7 @@ extension XCGradleHarness where Self : XCTestCase {
                 }
                 let driver = try await GradleDriver()
 
-                let dir = try pluginOutputFolder(moduleTranspilerFolder: moduleName + "/skip-transpiler/", linkingInto: linkFolder(forSourceFile: sourcePath))
+                let dir = try pluginOutputFolder(moduleTranspilerFolder: moduleName + "/\(pluginFolderName)/", linkingInto: linkFolder(forSourceFile: sourcePath))
 
                 // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibKtTests")
                 let baseModuleName = moduleName.dropLast(testModuleSuffix.count).description
