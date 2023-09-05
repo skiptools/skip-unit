@@ -68,7 +68,7 @@ extension XCGradleHarness where Self : XCTestCase {
 
                 let dir = try pluginOutputFolder(moduleTranspilerFolder: moduleName + "/\(pluginFolderName)/", linkingInto: linkFolder(forSourceFile: sourcePath))
 
-                // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibKtTests")
+                // tests are run in the merged base module (e.g., "SkipLib") that corresponds to this test module name ("SkipLibTests")
                 let baseModuleName = moduleName.dropLast(testModuleSuffix.count).description
 
                 var testProcessResult: ProcessResult? = nil
@@ -250,7 +250,7 @@ extension XCGradleHarness where Self : XCTestCase {
     /// Parse the console output from Gradle and looks for errors of the form
     ///
     /// ```
-    /// e: file:///…/skiphub.output/SkipSQLKtTests/skip-transpiler/SkipSQL/src/main/kotlin/skip/sql/SkipSQL.kt:94:26 Function invocation 'blob(...)' expected
+    /// e: file:///…/skiphub.output/SkipSQLTests/skipstone/SkipSQL/src/main/kotlin/skip/sql/SkipSQL.kt:94:26 Function invocation 'blob(...)' expected
     /// ```
     public func scanGradleOutput(line: String) {
         guard var issue = parseGradleOutput(line: line) else {
