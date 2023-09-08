@@ -19,6 +19,8 @@ build:
         - 'implementation("org.jetbrains.kotlin:kotlin-test")'
         - 'implementation("org.jetbrains.kotlin:kotlin-test-junit")'
 
+        - 'androidTestImplementation("androidx.test:runner:1.5.2")'
+
         - 'testImplementation("org.jetbrains.kotlin:kotlin-test-junit")'
         - 'androidTestImplementation("org.jetbrains.kotlin:kotlin-test-junit")'
 
