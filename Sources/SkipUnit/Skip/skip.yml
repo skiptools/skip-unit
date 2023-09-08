@@ -18,10 +18,18 @@ build:
         - 'implementation("org.jetbrains.kotlin:kotlin-reflect")'
         - 'implementation("org.jetbrains.kotlin:kotlin-test")'
         - 'implementation("org.jetbrains.kotlin:kotlin-test-junit")'
+
         - 'testImplementation("org.jetbrains.kotlin:kotlin-test-junit")'
+        - 'androidTestImplementation("org.jetbrains.kotlin:kotlin-test-junit")'
+
         - 'testImplementation("androidx.test:core:1.5.0")'
+        - 'androidTestImplementation("androidx.test:core:1.5.0")'
+
         - 'testImplementation("androidx.test.ext:junit:1.1.5")'
+        - 'androidTestImplementation("androidx.test.ext:junit:1.1.5")'
+
         - 'testImplementation("org.robolectric:robolectric:4.10.3")'
+        - 'androidTestImplementation("org.robolectric:robolectric:4.10.3")'
 
     - block: 'kotlin'
       contents:
