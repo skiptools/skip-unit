@@ -19,6 +19,7 @@ build:
         - 'implementation("org.jetbrains.kotlin:kotlin-test")'
         - 'implementation("org.jetbrains.kotlin:kotlin-test-junit")'
 
+        - 'testImplementation("org.robolectric:robolectric:4.10.3")'
         - 'androidTestImplementation("androidx.test:runner:1.5.2")'
 
         - 'testImplementation("org.jetbrains.kotlin:kotlin-test-junit")'
@@ -29,9 +30,6 @@ build:
 
         - 'testImplementation("androidx.test.ext:junit:1.1.5")'
         - 'androidTestImplementation("androidx.test.ext:junit:1.1.5")'
-
-        - 'testImplementation("org.robolectric:robolectric:4.10.3")'
-        - 'androidTestImplementation("org.robolectric:robolectric:4.10.3")'
 
     - block: 'kotlin'
       contents:
@@ -55,7 +53,9 @@ build:
 
         - block: 'testOptions'
           contents:
-            - 'unitTests.isIncludeAndroidResources = true'
+            - block: 'unitTests'
+              contents:
+                - 'isIncludeAndroidResources = true'
 
         - block: 'sourceSets'
           contents:
@@ -74,6 +74,7 @@ build:
     - block: 'tasks.withType<Test>().configureEach'
       contents:
         - 'systemProperties.put("robolectric.logging", "stdout")'
+        - 'systemProperties.put("robolectric.graphicsMode", "NATIVE")'
         - block: 'testLogging'
           contents:
             - 'this.showStandardStreams = true'
