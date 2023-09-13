@@ -6,11 +6,7 @@
 
 // SKIP SYMBOLFILE
 
-#if !SKIP
-#if canImport(XCTest)
-@_exported import XCTest
-#endif
-#else
+#if SKIP
 public func XCTAssert(_ a: Bool) {
 }
 public func XCTAssertTrue(_ a: Bool, _ msg: String = "") {
