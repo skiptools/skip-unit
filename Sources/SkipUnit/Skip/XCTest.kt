@@ -17,7 +17,7 @@ typealias XCTSkip = org.junit.AssumptionViolatedException
 /// NOTE: the parameter order of JUnit 5's `org.junit.jupiter.api.Assertions` is the reverse of JUnit 4's `org.junit.Assert`
 interface XCTestCase {
 
-	// SKIP INSERT: @org.junit.Before
+	@org.junit.Before
 	fun beforeTest() {
 		setUp()
 	}
@@ -26,7 +26,7 @@ interface XCTestCase {
 	fun setUp() {
 	}
 
-	// SKIP INSERT: @org.junit.After
+	@org.junit.After
 	fun afterTest() {
 		tearDown()
 	}
