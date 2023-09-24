@@ -1,8 +1,8 @@
-# skip-unit
+# SkipUnit
 
 Unit testing for [Skip](https://skip.tools) apps, adapting Swift XCUnit to transpiled Kotlin JUnit test cases.
 
-The skip-unit package provides a Swift `XCTest` interface to the Java/Kotlin `JUnit` testing framework.
+The `skip-unit` package provides a Swift `XCTest` interface to the Java/Kotlin `JUnit` testing framework.
 This provides automatic transpilation and testing of XCUnit test cases from Swift to Java,
 which enables parity testing to identify and isolate any differences between the Swift code and the transpiled Kotlin code.
 
