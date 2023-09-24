@@ -9,18 +9,19 @@ which enables parity testing to identify and isolate any differences between the
 
 ## Dependencies
 
-`SkipUnit` depends on the [skip](https://source.skip.tools/skip) transpiler Xcode/SwiftPM plugin, with no additional library dependencies.
+`SkipUnit` depends on the [skip](https://source.skip.tools/skip) transpiler plugin and has no additional library dependencies.
 
 It it part of the core Skip stack consisting of `SkipUnit`, [`SkipLib`](https://source.skip.tools/skip-lib), [`SkipFoundation`](https://source.skip.tools/skip-foundation), [`SkipModel`](https://source.skip.tools/skip-model), and [`SkipUI`](https://source.skip.tools/skip-ui).
-As such, it is not intended to be imported directly; rather, the Skip transpiler will automatically convert instances of `import XCUnit` into the Kotlin `import skip.unit.*`, thereby enabling transparent integration of this module.
-
+As such, it is not intended to be imported directly.
+The module is transparently adopted through the translation of `import XCUnit` into `import skip.unit.*` by the Skip transpiler.
 
 ## Parity Testing
 
 Parity testing is a central aspect of Skip development. It ensures that your Swift and Kotlin behave exactly the same. It also help quickly identify gaps in the Skip core modules that may be unimplemented.
 
-Skip's testing can be transparently adopted, meaning that you do not need to import any Skip-specific libraries in order to perform parity testing. The standard modules of `XCTest`, `OSLog`, and `Foundation`, as well as your own library dependencies, will be sufficient for performing most test operations.
-
+You do not need to import any Skip-specific libraries or APIs in order to perform parity testing. 
+The standard modules of `XCTest`, `OSLog`, and `Foundation`, as well as your own library dependencies, will be sufficient for performing most test operations.
+Your tests do need to run against both the macOS and iOS, since the Skip tests are only executed when running on the macOS destination.
 
 ### Writing tests
 
