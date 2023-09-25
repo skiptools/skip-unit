@@ -2,26 +2,26 @@
 
 Unit testing for [Skip](https://skip.tools) apps, adapting Swift XCUnit to transpiled Kotlin JUnit test cases.
 
-The `skip-unit` package provides a Swift `XCTest` interface to the Java/Kotlin `JUnit` testing framework.
+## About
+
+SkipUnit vends the `skip.unit` Kotlin package containing a Swift `XCTest` interface to the Java/Kotlin `JUnit` testing framework.
 This provides automatic transpilation and testing of XCUnit test cases from Swift to Java,
 which enables parity testing to identify and isolate any differences between the Swift code and the transpiled Kotlin code.
 
-
 ## Dependencies
 
-`SkipUnit` depends on the [skip](https://source.skip.tools/skip) transpiler plugin and has no additional library dependencies.
+SkipUnit depends on the [skip](https://source.skip.tools/skip) transpiler plugin and has no additional library dependencies.
 
-It it part of the core Skip stack consisting of `SkipUnit`, [`SkipLib`](https://source.skip.tools/skip-lib), [`SkipFoundation`](https://source.skip.tools/skip-foundation), [`SkipModel`](https://source.skip.tools/skip-model), and [`SkipUI`](https://source.skip.tools/skip-ui).
-As such, it is not intended to be imported directly.
+It is part of the core Skip stack and is not intended to be imported directly.
 The module is transparently adopted through the translation of `import XCUnit` into `import skip.unit.*` by the Skip transpiler.
 
 ## Parity Testing
 
-Parity testing is a central aspect of Skip development. It ensures that your Swift and Kotlin behave exactly the same. It also help quickly identify gaps in the Skip core modules that may be unimplemented.
+Parity testing is a central aspect of Skip development. It ensures that your Swift and Kotlin behave exactly the same.
 
 You do not need to import any Skip-specific libraries or APIs in order to perform parity testing. 
-The standard modules of `XCTest`, `OSLog`, and `Foundation`, as well as your own library dependencies, will be sufficient for performing most test operations.
-Your tests do need to run against both the macOS and iOS, since the Skip tests are only executed when running on the macOS destination.
+The standard modules of `XCTest` and `Foundation`, as well as your own library dependencies, will be sufficient for performing most test operations.
+Your tests **do** need to run against both the macOS and iOS, because the Skip tests are only executed when running on the macOS destination.
 
 ### Writing tests
 
@@ -29,10 +29,6 @@ A standard Skip test looks something like this:
 
 ```swift
 import XCTest
-import OSLog
-import Foundation
-
-let logger: Logger = Logger(subsystem: "app.id", category: "Tests")
 
 final class MyUnitTests: XCTestCase {
     func testSomeLogic() throws {
@@ -45,10 +41,10 @@ final class MyUnitTests: XCTestCase {
 
 The transpiled unit tests are intended to be run as part of the standard Xcode and Swift Package Manager testing process.
 
-This is done by adding one additional test class to the projects `Tests/ModuleNameTests/` folder named `XCSkipTests.swift`.
+This is done by adding one additional test class to the project's `Tests/ModuleNameTests/` folder named `XCSkipTests.swift`.
 
-This is done automatically when a library is created with the `skip init` command. 
-When adopting Skip into an existing process, the boilerplate test case can be added:
+This additional test class is added automatically when a library is created with the `skip init` command. 
+When adopting Skip into an existing process, add the test case manually:
 
 ```
 #if os(macOS) // Skip transpiled tests only run on macOS targets
@@ -64,12 +60,11 @@ final class XCSkipTests: XCTestCase, XCGradleHarness {
 #endif
 ```
 
-
 ### Running Tests from Xcode
 
-Once the `XCSkipTests.swift` file has been added to a project, the transpiled test cases will be automatically run whenever running the tests against the macOS run destination.
+Once the `XCSkipTests.swift` file has been added to a project, the transpiled test cases will automatically run whenever testing against the macOS run destination.
 As such, you need to ensure that your Swift code compiles and runs the same on macOS and iOS.
-This parity is a pre-requisite for Skip's parity testing, which runs the XCUnit test cases on macOS against the transpiled Kotlin tests in the Android testing environment.
+This is a pre-requisite for Skip's parity testing, which runs the XCUnit test cases on macOS against the transpiled Kotlin tests in the Android testing environment.
 
 The transpiled unit tests are run by forking the `gradle test` process on the macOS host machine against the output folder of the skip transpiler plugin.
 The JUnit test output XML files are then parsed, and a report summarizing the test results is presented to the user.
@@ -84,15 +79,7 @@ Note that running test cases will also initiate a gradle build, which has the si
 This may lead to a slow initial run of the tests and a perception that the tests may be hanging or excessively slow.
 Subsequent runs will use the cached dependencies, and will thus run much more quickly.
 
-### Kotlin Implementation Details
-
-The adaptation from Swift XCUnit to Kotlin JUnit test cases is quite simple.
-For example:
-
-```kotlin
-fun XCTAssertEqual(a: Any?, b: Any?): Unit = org.junit.Assert.assertEquals(b, a)
-```
-#### Test Failures
+### Test Failures
 
 Test failures differ in the XCTest and JUnit worlds. 
 
@@ -101,8 +88,16 @@ When the adapted `assert*` failure occurs in Kotlin, that failure is signalled b
 This distinction can be noted in the differing number of test failures that occur when mulitple `XCTAssert*` failures occur.
 The same applies to `XCTFail`, but not to `XCTSkip`, which is the supported and recommended way to prevent tests from running in one or the other environment.
 
+## Implementation Strategy
 
-#### Transpiled Kotlin Test Case
+The adaptation from Swift XCUnit to Kotlin JUnit test cases is quite simple.
+For example:
+
+```kotlin
+fun XCTAssertEqual(a: Any?, b: Any?): Unit = org.junit.Assert.assertEquals(b, a)
+```
+
+### Transpiled Kotlin Test Case
 
 While you may never need to intereact with it directly,
 the transpiled Kotlin for the example test case above looks like this:
@@ -113,9 +108,6 @@ package app.module.name
 import skip.lib.*
 
 import skip.unit.*
-import skip.foundation.*
-
-internal val logger: SkipLogger = SkipLogger(subsystem = "app.id", category = "Tests")
 
 internal class MyUnitTests: XCTestCase {
     @Test
