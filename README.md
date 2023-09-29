@@ -1,4 +1,4 @@
-# SkipUnit
+# SkipUnit: Skip Unit Testing Support
 
 Unit testing for [Skip](https://skip.tools) apps, adapting Swift XCUnit to transpiled Kotlin JUnit test cases.
 
@@ -22,6 +22,20 @@ Parity testing is a central aspect of Skip development. It ensures that your Swi
 You do not need to import any Skip-specific libraries or APIs in order to perform parity testing. 
 The standard modules of `XCTest` and `Foundation`, as well as your own library dependencies, will be sufficient for performing most test operations.
 Your tests **do** need to run against both the macOS and iOS, because the Skip tests are only executed when running on the macOS destination.
+
+## Testing Modes
+
+When writing Swift code that doesn't need access to device-specific services or other iOS-specific capabilities, the fastest development path is to build and run on macOS against the Cocoa APIs. Most common APIs behave the same between macOS and iOS, and running tests locally against the Cocoa version of an app enables quick unit testing cycles, both when developing with Xcode interactively, as well as running as part of a continuous integration (CI) process by running `swift test`. When tests need iOS-specific functionality, those tests can be gated inside `#if os(iOS)` blocks on order to enable them to be run only when targeting the iOS Simulator or device.
+
+Similarly, when running transpiled Kotlin/Gradle tests, the fastest development mode is to run the JUnit tests locally without launching an Android emulator or connecting to a device. While the Java and Kotlin APIs that underly `SkipFoundation` are sufficient for many testing needs, there are some Android-specific APIs that are needed. This compatibility is provided by the `Robolectric` framework, which provides a set of Android-compatible APIs for app testing. 
+
+These six modes of testing can be summarized by the following table:
+
+|          | Swift              | Kotlin           | Fidelity | Speed |
+| ---------|--------------------|------------------|----------|-------|
+| Local    | macOS w/ Cocoa API | macOS w/ Robolectric API | lowest | highest |
+| Simula   | iOS Simualtor      | Android Emulator | good | slower |
+| Actual   | iOS Device         | Android Device   | highest | slowest |
 
 ### Writing tests
 
@@ -60,6 +74,7 @@ final class XCSkipTests: XCTestCase, XCGradleHarness {
 #endif
 ```
 
+
 ### Running Tests from Xcode
 
 Once the `XCSkipTests.swift` file has been added to a project, the transpiled test cases will automatically run whenever testing against the macOS run destination.
@@ -88,7 +103,7 @@ When the adapted `assert*` failure occurs in Kotlin, that failure is signalled b
 This distinction can be noted in the differing number of test failures that occur when mulitple `XCTAssert*` failures occur.
 The same applies to `XCTFail`, but not to `XCTSkip`, which is the supported and recommended way to prevent tests from running in one or the other environment.
 
-## Implementation Strategy
+## Implementation Notes
 
 The adaptation from Swift XCUnit to Kotlin JUnit test cases is quite simple.
 For example:
