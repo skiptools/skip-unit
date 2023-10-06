@@ -12,10 +12,11 @@ build:
         - 'id("com.android.library") version "8.1.0"'
 
     - block: 'dependencies'
+      export: false
       contents:
         # kotlin-bom specifies the default version of any subsequent Kotlin dependencies
-        - 'implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.9.0"))'
-        - 'implementation("org.jetbrains.kotlin:kotlin-reflect")'
+        - 'api(platform("org.jetbrains.kotlin:kotlin-bom:1.9.0"))'
+        - 'api("org.jetbrains.kotlin:kotlin-reflect")'
         - 'implementation("org.jetbrains.kotlin:kotlin-test")'
         - 'implementation("org.jetbrains.kotlin:kotlin-test-junit")'
 
