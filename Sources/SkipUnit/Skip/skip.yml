@@ -17,8 +17,14 @@ build:
         # kotlin-bom specifies the default version of any subsequent Kotlin dependencies
         - 'api(platform("org.jetbrains.kotlin:kotlin-bom:1.9.0"))'
         - 'api("org.jetbrains.kotlin:kotlin-reflect")'
-        - 'implementation("org.jetbrains.kotlin:kotlin-test")'
-        - 'implementation("org.jetbrains.kotlin:kotlin-test-junit")'
+        - 'compileOnly("org.jetbrains.kotlin:kotlin-test")'
+        - 'compileOnly("org.jetbrains.kotlin:kotlin-test-junit")'
+
+    # test dependencies are exported to other packages, since they should not be included in api
+    - block: 'dependencies'
+      contents:
+        - 'testImplementation("org.jetbrains.kotlin:kotlin-test")'
+        - 'testImplementation("org.jetbrains.kotlin:kotlin-test-junit")'
 
         - 'testImplementation("org.robolectric:robolectric:4.10.3")'
         - 'androidTestImplementation("androidx.test:runner:1.5.2")'
