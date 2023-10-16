@@ -12,7 +12,7 @@ which enables parity testing to identify and isolate any differences between the
 
 SkipUnit depends on the [skip](https://source.skip.tools/skip) transpiler plugin and has no additional library dependencies.
 
-It is part of the core Skip stack and is not intended to be imported directly.
+It is part of the core *skipstack* and is not intended to be imported directly.
 The module is transparently adopted through the translation of `import XCUnit` into `import skip.unit.*` by the Skip transpiler.
 
 ## Parity Testing
