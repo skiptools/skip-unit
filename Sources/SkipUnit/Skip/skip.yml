@@ -67,14 +67,6 @@ build:
               contents:
                 - 'isIncludeAndroidResources = true'
 
-        - block: 'sourceSets'
-          contents:
-            - 'getByName("main").java.srcDirs("src/main/kotlin")'
-            - 'getByName("test").java.srcDirs("src/test/kotlin")'
-            # Needed to be able to run all test tests from `connectedAndroidTests`
-            # Causes "Duplicate Content Roots Detected" and failure to run tests in Android studio
-            - 'getByName("androidTest").java.srcDirs("src/test/kotlin")'
-
     - block: 'tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>()'
       contents:
         - block: 'kotlinOptions'

@@ -60,7 +60,8 @@ interface XCTestCase {
     fun XCTAssertNotIdentical(a: Any?, b: Any?, msg: String): Unit = org.junit.Assert.assertNotSame(msg, b, a)
 
     fun XCTAssertEqual(a: Any?, b: Any?): Unit = org.junit.Assert.assertEquals(b, a)
-    fun XCTAssertEqual(a: Any?, b: Any?, msg: String): Unit = org.junit.Assert.assertEquals(msg, b, a)
+    fun XCTAssertEqual(a: Any?, b: Any?, msg: String): Unit = org.junit.Assert.assertEquals("${a} is not equal to ${b} – " + msg, b, a)
+
     fun XCTAssertNotEqual(a: Any?, b: Any?): Unit = org.junit.Assert.assertNotEquals(b, a)
     fun XCTAssertNotEqual(a: Any?, b: Any?, msg: String): Unit = org.junit.Assert.assertNotEquals(msg, b, a)
 
