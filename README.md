@@ -21,7 +21,7 @@ Parity testing is a central aspect of Skip development. It ensures that your Swi
 You do not need to import any Skip-specific libraries or APIs in order to perform parity testing. 
 The standard modules of `XCTest` and `Foundation`, as well as your own library dependencies, will be sufficient for performing most test operations.
 
-Your tests **do** need to run against both the macOS and iOS platforms, because the Skip tests are only executed when running on the macOS destination. This is because the testing process relies on forking the Gradle process, which can only be done on macOS. It then interprets the Gradle results and surfaces them as test errors. While many of the Foundation and SwiftUI APIs are identical on macOS and iOS, you may occasionally have to work around minor differences. 
+Your tests **do** need to run against both the macOS and iOS platforms, because the Skip tests are only executed when running on the macOS destination. See [Running Tests from Xcode](#running-tests-from-xcode).
 
 ## Testing Modes
 
@@ -85,9 +85,9 @@ final class XCSkipTests: XCTestCase, XCGradleHarness {
 
 ### Running Tests from Xcode
 
-Once the `XCSkipTests.swift` file has been added to a project, the transpiled test cases will automatically run whenever testing against the macOS run destination.
+Once the `XCSkipTests.swift` file has been added to a project, the transpiled test cases will automatically run whenever testing against the **macOS** run destination.
 As such, you need to ensure that your Swift code compiles and runs the same on macOS and iOS.
-This is a pre-requisite for Skip's parity testing, which runs the XCUnit test cases on macOS against the transpiled Kotlin tests in the Android testing environment.
+This is a pre-requisite for Skip's parity testing, which runs the XCUnit test cases on macOS against the transpiled Kotlin tests in the Android testing environment. While many of the Foundation and SwiftUI APIs are identical on macOS and iOS, you may occasionally have to work around minor differences. 
 
 The transpiled unit tests are run by forking the `gradle test` process on the macOS host machine against the output folder of the skip transpiler plugin.
 The JUnit test output XML files are then parsed, and a report summarizing the test results is presented.
