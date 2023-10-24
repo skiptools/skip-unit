@@ -1,18 +1,17 @@
-# SkipUnit: Skip Unit Testing Support
+# SkipUnit
 
 Unit testing for [Skip](https://skip.tools) apps, adapting Swift XCUnit to transpiled Kotlin JUnit test cases.
 
 ## About
 
 SkipUnit vends the `skip.unit` Kotlin package containing a Swift `XCTest` interface to the Java/Kotlin `JUnit` testing framework.
-This provides automatic transpilation and testing of XCUnit test cases from Swift to Java,
-which enables parity testing to identify and isolate any differences between the Swift code and the transpiled Kotlin code.
+Combined with [skip](https://source.skip.tools/skip) transpiler, this provides automatic transpilation of XCUnit test cases as JUnit tests, which enables parity testing to identify and isolate any differences between your Swift code and your transpiled Skip Kotlin code.
 
 ## Dependencies
 
 SkipUnit depends on the [skip](https://source.skip.tools/skip) transpiler plugin and has no additional library dependencies.
 
-It is part of the core *skipstack* and is not intended to be imported directly.
+It is part of the core *SkipStack* and is not intended to be imported directly.
 The module is transparently adopted through the translation of `import XCUnit` into `import skip.unit.*` by the Skip transpiler.
 
 ## Parity Testing
@@ -21,11 +20,11 @@ Parity testing is a central aspect of Skip development. It ensures that your Swi
 
 You do not need to import any Skip-specific libraries or APIs in order to perform parity testing. 
 The standard modules of `XCTest` and `Foundation`, as well as your own library dependencies, will be sufficient for performing most test operations.
-Your tests **do** need to run against both the macOS and iOS, because the Skip tests are only executed when running on the macOS destination.
+Your tests **do** need to run against both the macOS and iOS platforms, because the Skip tests are only executed when running on the macOS destination.
 
 ## Testing Modes
 
-When writing Swift code that doesn't need access to device-specific services or other iOS-specific capabilities, the fastest development path is to build and run on macOS against the Cocoa APIs. Most common APIs behave the same between macOS and iOS, and running tests locally against the Cocoa version of an app enables quick unit testing cycles, both when developing with Xcode interactively, as well as running as part of a continuous integration (CI) process by running `swift test`. When tests need iOS-specific functionality, those tests can be gated inside `#if os(iOS)` blocks on order to enable them to be run only when targeting the iOS Simulator or device.
+When writing Swift code that doesn't need access to device-specific services or other iOS-specific capabilities, the fastest development path is to build and run against macOS. Most common APIs behave the same between macOS and iOS, and running tests locally against the macOS version of an app enables quick unit testing cycles, both when developing with Xcode interactively, as well as running as part of a continuous integration (CI) process by running `swift test`. When tests need iOS-specific functionality, those tests can be gated inside `#if os(iOS)` blocks on order to enable them to be run only when targeting the iOS Simulator or device.
 
 Similarly, when running transpiled Kotlin/Gradle tests, the fastest development mode is to run the JUnit tests locally without launching an Android emulator or connecting to a device. While the Java and Kotlin APIs that underly `SkipFoundation` are sufficient for many testing needs, there are some Android-specific APIs that are needed. This compatibility is provided by the `Robolectric` framework, which provides a set of Android-compatible APIs for app testing. 
 
@@ -37,9 +36,9 @@ These six modes of testing can be summarized by the following table:
 | Simula   | iOS Simualtor      | Android Emulator | good | slower |
 | Actual   | iOS Device         | Android Device   | highest | slowest |
 
-### Writing tests
+### Writing Tests
 
-A standard Skip test looks something like this:
+A standard Skip test is the same as any standard XCTest:
 
 ```swift
 import XCTest
@@ -68,7 +67,7 @@ import SkipTest
 @available(macOS 13, *)
 final class XCSkipTests: XCTestCase, XCGradleHarness {
     public func testSkipModule() async throws {
-        try await runGradleTests(device: .none) // set device ID to run in Android emulator vs. robolectric
+        try await runGradleTests(device: .none) // set device ID to run in Android emulator vs. Robolectric
     }   
 }       
 #endif
@@ -82,17 +81,23 @@ As such, you need to ensure that your Swift code compiles and runs the same on m
 This is a pre-requisite for Skip's parity testing, which runs the XCUnit test cases on macOS against the transpiled Kotlin tests in the Android testing environment.
 
 The transpiled unit tests are run by forking the `gradle test` process on the macOS host machine against the output folder of the skip transpiler plugin.
-The JUnit test output XML files are then parsed, and a report summarizing the test results is presented to the user.
+The JUnit test output XML files are then parsed, and a report summarizing the test results is presented.
 
 ### Running Tests from the CLI/CI
 
 The `swift test` command on macOS will automatically perform test transpliation.
 This can be used for headless testing locally as well as on a continuous integration (CI) server.
 
-Note that running test cases will also initiate a gradle build, which has the side-effect of gradle downloading all the library dependencies for the modules. When tests depend on frameworks like `SkipUI`, which depends on may Jetpack Compose libraries, the dependencies can amount to over 1 gigabyte in the `~/.gradle/` folder. 
+Note that running test cases will also initiate a Gradle build, which has the side-effect of Gradle downloading all the library dependencies for the modules. When tests depend on frameworks like `SkipUI`, which depends on many Jetpack Compose libraries, the dependencies can amount to over 1 gigabyte in the `~/.gradle/` folder. 
 
 This may lead to a slow initial run of the tests and a perception that the tests may be hanging or excessively slow.
 Subsequent runs will use the cached dependencies, and will thus run much more quickly.
+
+### Running Tests from Android Studio
+
+Once your module and tests have been transpiled, you can run the JUnit tests directly from Android Studio. To open the tests for a module created with `skip init`, navigate to your module's `Skip/build/<module>.output/<module>Tests/skipstone` folder. Control-click the `settings.gradle.kts` file and select 'Open with External Editor' from the resulting context menu.
+
+Running in Android Studio allows you to bypass the iOS tests and to run - and to debug - individual Android tests. This can be helpful when tracking down Android-specific failures.
 
 ### Test Failures
 
@@ -114,7 +119,7 @@ fun XCTAssertEqual(a: Any?, b: Any?): Unit = org.junit.Assert.assertEquals(b, a)
 
 ### Transpiled Kotlin Test Case
 
-While you may never need to intereact with it directly,
+While you may never need to interact with it directly,
 the transpiled Kotlin for the example test case above looks like this:
 
 ```kotlin
