@@ -20,13 +20,16 @@ Parity testing is a central aspect of Skip development. It ensures that your Swi
 
 You do not need to import any Skip-specific libraries or APIs in order to perform parity testing. 
 The standard modules of `XCTest` and `Foundation`, as well as your own library dependencies, will be sufficient for performing most test operations.
-Your tests **do** need to run against both the macOS and iOS platforms, because the Skip tests are only executed when running on the macOS destination.
+
+Your tests **do** need to run against both the macOS and iOS platforms, because the Skip tests are only executed when running on the macOS destination. This is because the testing process relies on forking the Gradle process, which can only be done on macOS. It then interprets the Gradle results and surfaces them as test errors. While many of the Foundation and SwiftUI APIs are identical on macOS and iOS, you may occasionally have to work around minor differences. 
 
 ## Testing Modes
 
 When writing Swift code that doesn't need access to device-specific services or other iOS-specific capabilities, the fastest development path is to build and run against macOS. Most common APIs behave the same between macOS and iOS, and running tests locally against the macOS version of an app enables quick unit testing cycles, both when developing with Xcode interactively, as well as running as part of a continuous integration (CI) process by running `swift test`. When tests need iOS-specific functionality, those tests can be gated inside `#if os(iOS)` blocks on order to enable them to be run only when targeting the iOS Simulator or device.
 
-Similarly, when running transpiled Kotlin/Gradle tests, the fastest development mode is to run the JUnit tests locally without launching an Android emulator or connecting to a device. While the Java and Kotlin APIs that underly `SkipFoundation` are sufficient for many testing needs, there are some Android-specific APIs that are needed. This compatibility is provided by the `Robolectric` framework, which provides a set of Android-compatible APIs for app testing. 
+Similarly, when running transpiled Kotlin/Gradle tests, the fastest development mode is to run the JUnit tests locally without launching an Android emulator or connecting to a device. While the Java and Kotlin APIs that underly `SkipFoundation` are sufficient for many testing needs, there are some Android-specific APIs that are needed. This compatibility is provided by the Robolectric framework, which provides a set of Android-compatible APIs for app testing. 
+
+Keep in mind that *Robolectric is not Android*. The local Robolectric testing environment is similar, but not identical, to an actual Android emulator or device. Some Android APIs are missing from Robolectric, and it is possible that the compiled Java bytecode run locally differs from the Dalvik/ART byte code that is run in a true Android environment. If this becomes a problem, follow the instructions below to run the tests on an Android device or emulator instead.
 
 These six modes of testing can be summarized by the following table:
 
@@ -36,9 +39,16 @@ These six modes of testing can be summarized by the following table:
 | Simula   | iOS Simualtor      | Android Emulator | good | slower |
 | Actual   | iOS Device         | Android Device   | highest | slowest |
 
-### Writing Tests
 
-A standard Skip test is the same as any standard XCTest:
+By default, Skip uses the simulated Robolectric Android environment to run your transpiled tests. To run them against an Android device or emulator instead, set the device or emulator ID in the `ANDROID_SERIAL` environment variable. This can be done either in the Xcode scheme's `Run` action arguments for the target, or as a standard environment variable when using the command line:
+
+```shell
+> ANDROID_SERIAL=emulator-5554 swift tests
+```
+
+## Writing Tests
+
+A standard Skip test is just a plain XCTest:
 
 ```swift
 import XCTest
@@ -50,7 +60,7 @@ final class MyUnitTests: XCTestCase {
 }
 ```
 
-### Adding Tests to a project
+## Running Tests
 
 The transpiled unit tests are intended to be run as part of the standard Xcode and Swift Package Manager testing process.
 
@@ -72,7 +82,6 @@ final class XCSkipTests: XCTestCase, XCGradleHarness {
 }       
 #endif
 ```
-
 
 ### Running Tests from Xcode
 
