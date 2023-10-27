@@ -41,10 +41,6 @@ build:
         - 'testImplementation("androidx.test.ext:junit:1.1.5")'
         - 'androidTestImplementation("androidx.test.ext:junit:1.1.5")'
 
-    - block: 'kotlin'
-      contents:
-        - 'jvmToolchain(20)'
-
     - block: 'android'
       contents:
         - 'namespace = group as String'
@@ -57,9 +53,6 @@ build:
           contents:
             - 'sourceCompatibility = JavaVersion.VERSION_20'
             - 'targetCompatibility = JavaVersion.VERSION_20'
-        - block: 'kotlinOptions'
-          contents:
-            - 'jvmTarget = "20"'
 
         - block: 'testOptions'
           contents:
