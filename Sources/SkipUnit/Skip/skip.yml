@@ -43,7 +43,7 @@ build:
 
     - block: 'kotlin'
       contents:
-        - 'jvmToolchain(20)'
+        - 'jvmToolchain(17)'
 
     - block: 'android'
       contents:
@@ -55,11 +55,8 @@ build:
             - 'testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"'
         - block: 'compileOptions'
           contents:
-            - 'sourceCompatibility = JavaVersion.VERSION_20'
-            - 'targetCompatibility = JavaVersion.VERSION_20'
-        - block: 'kotlinOptions'
-          contents:
-            - 'jvmTarget = "20"'
+            - 'sourceCompatibility = JavaVersion.VERSION_17'
+            - 'targetCompatibility = JavaVersion.VERSION_17'
 
         - block: 'testOptions'
           contents:
