@@ -97,22 +97,11 @@ settings:
           contents:
             - 'gradlePluginPortal()'
             - 'mavenCentral()'
-
-    - block: 'dependencyResolutionManagement'
-      contents:
-        - 'repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)'
-        - block: 'repositories'
-          contents:
-            - 'mavenCentral()'
-
-    - block: 'pluginManagement'
-      contents:
-        - block: 'repositories'
-          contents:
             - 'google()'
 
     - block: 'dependencyResolutionManagement'
       contents:
         - block: 'repositories'
           contents:
+            - 'mavenCentral()'
             - 'google()'
