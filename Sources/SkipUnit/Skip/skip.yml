@@ -95,15 +95,15 @@ settings:
       contents:
         - block: 'repositories'
           contents:
-            - 'maven("https://maven.skip.tools")'
             - 'gradlePluginPortal()'
             - 'mavenCentral()'
             - 'google()'
+            - 'maven("https://maven.skip.tools")'
 
     - block: 'dependencyResolutionManagement'
       contents:
         - block: 'repositories'
           contents:
-            - 'maven("https://maven.skip.tools")'
             - 'mavenCentral()'
             - 'google()'
+            - 'maven("https://maven.skip.tools")'
