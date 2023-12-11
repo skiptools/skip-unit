@@ -1,3 +1,9 @@
+## 0.4.7
+
+Released 2023-12-11
+
+  - Add CHANGELOG.md
+
 ## 0.4.6
 
 Released 2023-11-27
