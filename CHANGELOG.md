@@ -1,3 +1,9 @@
+## 0.5.0
+
+Released 2024-02-05
+
+  - Use gradle version catalogs for dependencies
+
 ## 0.4.8
 
 Released 2024-01-12
