@@ -107,3 +107,9 @@ build:
             - block: 'unitTests'
               contents:
                 - 'isIncludeAndroidResources = true'
+
+    - block: 'tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>()'
+      contents:
+        - block: 'kotlinOptions'
+          contents:
+            - 'suppressWarnings = true'
