@@ -1,3 +1,9 @@
+## 0.5.1
+
+Released 2024-02-10
+
+  - Re-enable suppressWarnings for KotlinCompile tasks
+
 ## 0.5.0
 
 Released 2024-02-05
