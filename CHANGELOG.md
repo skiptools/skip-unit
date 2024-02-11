@@ -1,3 +1,9 @@
+## 0.5.2
+
+Released 2024-02-11
+
+  - Add buildSrc for Skip gradle plugin
+
 ## 0.5.1
 
 Released 2024-02-10
