@@ -1,6 +1,6 @@
 # SkipUnit
 
-Unit testing for [Skip](https://skip.tools) apps, adapting Swift XCUnit to transpiled Kotlin JUnit test cases.
+Base Skip gradle plugin module and unit testing for [Skip](https://skip.tools) apps, adapting Swift XCUnit to transpiled Kotlin JUnit test cases.
 
 ## About
 
