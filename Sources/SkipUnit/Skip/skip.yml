@@ -74,6 +74,7 @@ build:
       contents:
         - 'alias(libs.plugins.kotlin.android)'
         - 'alias(libs.plugins.android.library)'
+        - 'id("maven-publish")'
 
     - block: 'dependencies'
       export: false
@@ -108,8 +109,26 @@ build:
               contents:
                 - 'isIncludeAndroidResources = true'
 
+        - block: 'publishing'
+          contents:
+            - block: 'multipleVariants'
+              contents:
+                - 'allVariants()'
+                - 'withSourcesJar()'
+
     - block: 'tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>()'
       contents:
         - block: 'kotlinOptions'
           contents:
             - 'suppressWarnings = true'
+
+    - block: 'publishing'
+      contents:
+        - block: 'publications'
+          contents:
+            - block: 'register<MavenPublication>("default")'
+              contents:
+                - 'groupId = project.group.toString()'
+                - 'artifactId = project.name'
+                - 'version = project.version.toString()'
+                - 'afterEvaluate { from(components["default"]) }'
