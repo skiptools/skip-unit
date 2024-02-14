@@ -1,3 +1,9 @@
+## 0.5.3
+
+Released 2024-02-14
+
+  - Gradle actions for publishing framework artifacts
+
 ## 0.5.2
 
 Released 2024-02-11
