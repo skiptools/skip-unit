@@ -1,3 +1,15 @@
+## 0.6.0
+
+Released 2024-02-15
+
+  - Bump JDK version from 17 to 21
+
+## 0.5.4
+
+Released 2024-02-15
+
+  - Bump JDK version from 17 to 21
+
 ## 0.5.3
 
 Released 2024-02-14
