@@ -60,6 +60,8 @@ final class MyUnitTests: XCTestCase {
 }
 ```
 
+**Note**: The Skip transpiler currently does not have access to the internal API of the module being tested. If you take advantage of Swift's `@testable imports` to exercise internal API, the transpiler will not be able to perform its usual type inference when translating your test code. This just means that you might have to be more explicit about types and to fully-qualify values (e.g. `MyType.value` instead of just `.value`) when unit testing internal API.
+
 ## Running Tests
 
 The transpiled unit tests are intended to be run as part of the standard Xcode and Swift Package Manager testing process.
