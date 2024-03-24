@@ -1,3 +1,10 @@
+## 0.6.2
+
+Released 2024-03-24
+
+  - Add androidx.test:core and androidx.test:rules to dependencies
+  - Update README with note about testing internal API
+
 ## 0.6.1
 
 Released 2024-02-18
