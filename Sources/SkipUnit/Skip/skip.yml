@@ -57,6 +57,12 @@ settings:
                 - 'version("androidx-test-runner", "1.5.2")'
                 - 'library("androidx-test-runner", "androidx.test", "runner").versionRef("androidx-test-runner")'
 
+                - 'version("androidx-test-core", "1.5.0")'
+                - 'library("androidx-test-core", "androidx.test", "core").versionRef("androidx-test-core")'
+
+                - 'version("androidx-test-rules", "1.5.0")'
+                - 'library("androidx-test-rules", "androidx.test", "rules").versionRef("androidx-test-rules")'
+
                 - 'version("androidx-test-ext-junit", "1.1.5")'
                 - 'library("androidx-test-ext-junit", "androidx.test.ext", "junit").versionRef("androidx-test-ext-junit")'
 
