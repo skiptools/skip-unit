@@ -44,7 +44,8 @@ class SkipBuildPlugin : Plugin<Project> {
             val appName = env.skipEnv("PRODUCT_NAME")
             val packageName = env.skipEnv("ANDROID_PACKAGE_NAME")
             val appModule = packageName + ":" + appName
-            val activity = env.skipEnv("PRODUCT_BUNDLE_IDENTIFIER") + "/" + packageName + ".MainActivity"
+            val applicationId = env.skipEnv("PRODUCT_BUNDLE_IDENTIFIER").replace("-", "_")
+            val activity = applicationId + "/" + packageName + ".MainActivity"
             dependencies.add("implementation", appModule)
 
             //val androidExtension = extensions.getByName("android") as com.android.build.gradle.BaseExtension // Unable to load class 'com.android.build.gradle.BaseExtension'
@@ -52,7 +53,7 @@ class SkipBuildPlugin : Plugin<Project> {
             project.withGroovyBuilder {
                 getProperty("android").withGroovyBuilder {
                     getProperty("defaultConfig").withGroovyBuilder {
-                        setProperty("applicationId", env.skipEnv("PRODUCT_BUNDLE_IDENTIFIER"))
+                        setProperty("applicationId", applicationId)
                         setProperty("versionCode", env.skipEnv("CURRENT_PROJECT_VERSION"))
                         setProperty("versionName", env.skipEnv("MARKETING_VERSION"))
                         getProperty("manifestPlaceholders").withGroovyBuilder {
