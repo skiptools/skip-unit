@@ -1,3 +1,10 @@
+## 0.6.4
+
+Released 2024-03-30
+
+  - Replace dash with underscore to convert PRODUCT_BUNDLE_IDENTIFIER into valid Android applicationId
+  - ci: update workflow actions location
+
 ## 0.6.2
 
 Released 2024-03-24
