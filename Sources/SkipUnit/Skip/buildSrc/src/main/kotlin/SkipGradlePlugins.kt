@@ -54,7 +54,7 @@ class SkipBuildPlugin : Plugin<Project> {
                 getProperty("android").withGroovyBuilder {
                     getProperty("defaultConfig").withGroovyBuilder {
                         setProperty("applicationId", applicationId)
-                        setProperty("versionCode", env.skipEnv("CURRENT_PROJECT_VERSION"))
+                        setProperty("versionCode", env.skipEnv("CURRENT_PROJECT_VERSION")?.toInt())
                         setProperty("versionName", env.skipEnv("MARKETING_VERSION"))
                         getProperty("manifestPlaceholders").withGroovyBuilder {
                             // Configures the manifest placeholders for AndroidManifest.xml build-time replacement based on the keys in the Skip.env file
