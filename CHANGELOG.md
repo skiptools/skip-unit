@@ -1,3 +1,9 @@
+## 0.6.5
+
+Released 2024-04-01
+
+  - Fix versionCode generation to convert string to integer
+
 ## 0.6.4
 
 Released 2024-03-30
