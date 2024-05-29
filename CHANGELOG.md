@@ -1,3 +1,15 @@
+## 0.7.0
+
+Released 2024-05-29
+
+  - Bump kotlin-coroutines to 1.8.1
+
+## 0.6.6
+
+Released 2024-05-29
+
+  - Bump kotlin-coroutines to 1.8.1
+
 ## 0.6.5
 
 Released 2024-04-01
