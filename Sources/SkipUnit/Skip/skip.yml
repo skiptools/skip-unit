@@ -48,7 +48,7 @@ settings:
                 - 'plugin("kotlin-android", "org.jetbrains.kotlin.android").versionRef("kotlin")'
                 - 'library("kotlin-bom", "org.jetbrains.kotlin", "kotlin-bom").versionRef("kotlin")'
 
-                - 'version("kotlin-coroutines", "1.7.3")'
+                - 'version("kotlin-coroutines", "1.8.1")'
                 - 'library("kotlinx-coroutines-core", "org.jetbrains.kotlinx", "kotlinx-coroutines-core").versionRef("kotlin-coroutines")'
                 - 'library("kotlinx-coroutines-android", "org.jetbrains.kotlinx", "kotlinx-coroutines-android").versionRef("kotlin-coroutines")'
 
@@ -66,7 +66,7 @@ settings:
                 - 'version("androidx-test-ext-junit", "1.1.5")'
                 - 'library("androidx-test-ext-junit", "androidx.test.ext", "junit").versionRef("androidx-test-ext-junit")'
 
-                - 'version("kotlin-coroutines-test", "1.7.3")'
+                - 'version("kotlin-coroutines-test", "1.8.1")'
                 - 'library("kotlinx-coroutines-test", "org.jetbrains.kotlinx", "kotlinx-coroutines-test").versionRef("kotlin-coroutines-test")'
 
                 - 'library("kotlin-test", "org.jetbrains.kotlin", "kotlin-test").withoutVersion()'
