@@ -9,15 +9,18 @@ import org.gradle.kotlin.dsl.add
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.extra
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileReader
 import java.nio.charset.Charset
 import java.util.Properties
+import java.util.regex.Pattern
 import com.android.build.gradle.BaseExtension
 import com.android.build.api.dsl.*
 import org.gradle.kotlin.dsl.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.Exec
 import org.gradle.api.initialization.Settings
 
@@ -32,6 +35,29 @@ class SkipBuildPlugin : Plugin<Project> {
     private var project: Project? = null
 
     override fun apply(project: Project) {
+        val logger: Logger = project.logger
+
+        fun info(message: String) {
+            logger.info(message)
+        }
+
+        fun warn(message: String) {
+            // output in the standard Gradle warning format, which skip will parse and convert into an Xcode warning
+            logger.warn("w: file://:0:0 ${message}")
+        }
+
+        fun error(message: String) {
+            // output in the standard Gradle error format, which skip will parse and convert into an Xcode error
+            logger.error("e: file://:0:0 ${message}")
+        }
+
+        // TODO: try to add the compose compiler plugin if it does not exist in the project
+        // https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-compiler.html#migrating-a-compose-multiplatform-project
+        // https://android-developers.googleblog.com/2024/04/jetpack-compose-compiler-moving-to-kotlin-repository.html
+        if (!project.plugins.hasPlugin("org.jetbrains.kotlin.plugin.compose")) {
+            //project.plugins.apply("org.jetbrains.kotlin.plugin.compose")
+        }
+
         this.project = project
         val baseDir = project.rootDir.resolve("..")
         val env = loadSkipEnv(baseDir.resolve(skipEnvFilename))
@@ -54,7 +80,7 @@ class SkipBuildPlugin : Plugin<Project> {
                 getProperty("android").withGroovyBuilder {
                     getProperty("defaultConfig").withGroovyBuilder {
                         setProperty("applicationId", applicationId)
-                        setProperty("versionCode", env.skipEnv("CURRENT_PROJECT_VERSION")?.toInt())
+                        setProperty("versionCode", env.skipEnv("CURRENT_PROJECT_VERSION").toInt())
                         setProperty("versionName", env.skipEnv("MARKETING_VERSION"))
                         getProperty("manifestPlaceholders").withGroovyBuilder {
                             // Configures the manifest placeholders for AndroidManifest.xml build-time replacement based on the keys in the Skip.env file
@@ -72,26 +98,66 @@ class SkipBuildPlugin : Plugin<Project> {
                 task("launch" + buildType) {
                     dependsOn("install" + buildType)
                     doLast {
-                        // TODO: if `skip devices` returns more than once value, set ANDROID_SERIAL to one of them or allow customization
+                        // if `skip devices` returns more than a single value, set ANDROID_SERIAL to one of them or allow customization
+                        val devicesOut = ByteArrayOutputStream()
                         exec {
                             commandLine = listOf(
                                 "adb".withExecutableExtension(),
                                 "devices")
+                            standardOutput = devicesOut
                         }
 
-                        exec {
-                            commandLine = listOf(
-                                "adb".withExecutableExtension(),
-                                "shell",
-                                "am",
-                                "start",
-                                "-a",
-                                "android.intent.action.MAIN",
-                                "-c",
-                                "android.intent.category.LAUNCHER",
-                                "-n",
-                                activity
-                            )
+                        //warn("running adb devices: ${devicesOut}")
+
+                        data class DeviceInfo(val serialNumber: String, val deviceType: String)
+
+                        val devicesOutString = devicesOut.toByteArray().toString(Charsets.UTF_8)
+                        val devices = mutableListOf<DeviceInfo>()
+
+                        val androidSerialsEnv = System.getenv("ANDROID_SERIAL")
+
+                        devicesOutString.lines().forEach { line ->
+                            if (line.endsWith("\tdevice")) {
+                                val parts = line.split("\t")
+                                if (parts.size == 2) {
+                                    val serialNumber = parts[0]
+                                    val deviceType = parts[1]
+                                    // if we have set the ANDROID_SERIAL environment, only add the
+                                    // device to the list if it matches the serial number
+                                    if (androidSerialsEnv == null || androidSerialsEnv.isEmpty() || androidSerialsEnv == serialNumber) {
+                                        devices.add(DeviceInfo(serialNumber, deviceType))
+                                    }
+                                }
+                            }
+                        }
+
+                        //warn("adb devices output: ${devicesOutString}")
+
+                        if (devices.size == 0) {
+                            error("No connected Android devices or emulators were reported by `adb devices`. To launch the app, start an emulator from the Android Studio Device Manager or use the ~/Library/Android/sdk/emulator/emulator command")
+                        } else if (devices.size > 1) {
+                            val serials = devices.map({ it.serialNumber }).joinToString(", ")
+                            warn("Multiple connected devices were reported by `adb devices`. Will attempt to launch on each device/emulator: ${serials}")
+                        }
+
+                        devices.forEach { device ->
+                            info("launching app on device: ${device.serialNumber}")
+                            exec {
+                                commandLine = listOf(
+                                    "adb".withExecutableExtension(),
+                                    "-s",
+                                    device.serialNumber,
+                                    "shell",
+                                    "am",
+                                    "start",
+                                    "-a",
+                                    "android.intent.action.MAIN",
+                                    "-c",
+                                    "android.intent.category.LAUNCHER",
+                                    "-n",
+                                    activity
+                                )
+                            }
                         }
                     }
                 }
