@@ -21,6 +21,7 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.Exec
 import org.gradle.api.initialization.Settings
 
@@ -36,20 +37,11 @@ class SkipBuildPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         val logger: Logger = project.logger
-
-        fun info(message: String) {
-            logger.info(message)
-        }
-
-        fun warn(message: String) {
-            // output in the standard Gradle warning format, which skip will parse and convert into an Xcode warning
-            logger.warn("w: file://:0:0 ${message}")
-        }
-
-        fun error(message: String) {
-            // output in the standard Gradle error format, which skip will parse and convert into an Xcode error
-            logger.error("e: file://:0:0 ${message}")
-        }
+        fun info(message: String) = logger.info(message)
+        // output in the standard Gradle warning format, which skip will parse and convert into an Xcode warning
+        fun warn(message: String) = logger.warn("w: file://:0:0 ${message}")
+        // output in the standard Gradle error format, which skip will parse and convert into an Xcode error
+        fun error(message: String) = logger.error("e: file://:0:0 ${message}")
 
         // TODO: try to add the compose compiler plugin if it does not exist in the project
         // https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-compiler.html#migrating-a-compose-multiplatform-project
@@ -182,6 +174,13 @@ class SkipBuildPlugin : Plugin<Project> {
 
 class SkipSettingsPlugin : Plugin<Settings> {
     override fun apply(settings: Settings) {
+        val logger: Logger = Logging.getLogger(SkipSettingsPlugin::class.java)
+        fun info(message: String) = logger.info(message)
+        // output in the standard Gradle warning format, which skip will parse and convert into an Xcode warning
+        fun warn(message: String) = logger.warn("w: file://:0:0 ${message}")
+        // output in the standard Gradle error format, which skip will parse and convert into an Xcode error
+        fun error(message: String) = logger.error("e: file://:0:0 ${message}")
+
         with(settings) {
             val baseDir = rootDir.resolve("..")
             val env = loadSkipEnv(baseDir.resolve(skipEnvFilename))
@@ -197,31 +196,48 @@ class SkipSettingsPlugin : Plugin<Settings> {
             }
 
             rootProject.name = env.skipEnv("ANDROID_PACKAGE_NAME")
-            val swiftProjectName = env.skipEnv("SKIP_PROJECT_NAME")
             val swiftModuleName = env.skipEnv("PRODUCT_NAME")
 
             // the source for the plugin is linked as part of the SkipUnit transpilation
             val skipOutput = System.getenv("BUILT_PRODUCTS_DIR") ?: System.getProperty("BUILT_PRODUCTS_DIR")
-
-            val outputExt = if (skipOutput != null) ".output" else "" // Xcode saves output in package-name.output; SPM has no suffix
             val skipOutputs: File = if (skipOutput != null) {
-                // BUILT_PRODUCTS_DIR is set when building from Xcode, in which case we will re-use Xcode's DerivedData plugin output
+                // BUILT_PRODUCTS_DIR is set when building from Xcode, in which case we will use Xcode's DerivedData plugin output folder for the build project
                 File(skipOutput).resolve("../../../SourcePackages/plugins/")
             } else {
-                // SPM output folder is a peer of the parent Package.swift
+                // SPM output folder is a peer of the parent Package.swift in the .build folder
                 buildDir.resolve("plugins/outputs/")
             }
-            val projectDir = skipOutputs
-                .resolve(swiftProjectName + outputExt)
-                .resolve(swiftModuleName)
-                .resolve("skipstone")
 
-            // apply the settings directly to get the dependencies, which provides the "libs" versionCatalog
-            apply(projectDir.resolve("settings.gradle.kts"))
-            // add all the Skip dependant projects
-            includeBuild(projectDir)
-            // finally, include the local app scaffold
-            include(":app")
+            //warn("checking skipOutputs: ${skipOutputs}")
+            if (!skipOutputs.exists()) {
+                error("The expected plugin output folder did not exist at ${skipOutputs}. This may mean that the Skip project was not transpiled successfully, or that the skipstone transpiler plugin is not enabled for the project. Check the gradle log for details and see https://skip.tools/docs/faq/ for troubleshooting.")
+            }
+
+            // look in each of the output folders and return the first one for which the ModuleName/skipstone/ folder exists.
+            // we used to use the SKIP_PROJECT_NAME project setting, but that requires that the Swift package app name was identical to the folder name in which the project resided, so this is more robust (at the cost of potentially having conflicting module names, if one should exist)
+            val projectBaseDir = skipOutputs.listFiles().firstOrNull { path ->
+                //warn("checking skipOutputs child: ${path}")
+                path.resolve(swiftModuleName).resolve("skipstone").exists()
+            }
+
+            if (projectBaseDir == null) {
+                error("Could not locate transpiled module for ${swiftModuleName} in ${skipOutputs}. This may mean that the Skip project was not transpiled successfully. Check the gradle log for details and see https://skip.tools/docs/faq/ for troubleshooting.")
+            } else {
+                val projectDir = projectBaseDir
+                    .resolve(swiftModuleName)
+                    .resolve("skipstone")
+
+                if (!projectDir.exists()) {
+                    error("The folder at ${projectDir} does not exist. This may mean that the Skip project was not transpiled successfully, or the name of the project module is not unique in the packages that were created. Check the gradle log for details and see https://skip.tools/docs/faq/ for troubleshooting.")
+                }
+
+                // apply the settings directly to get the dependencies, which provides the "libs" versionCatalog
+                apply(projectDir.resolve("settings.gradle.kts"))
+                // add all the Skip dependant projects
+                includeBuild(projectDir)
+                // finally, include the local app scaffold
+                include(":app")
+            }
         }
     }
 }
