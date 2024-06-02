@@ -1,5 +1,12 @@
 ## 0.7.1
 
+Released 2024-06-02
+
+  - Warn when launching on multiple emulator/device instances
+  - Update gradle plugin to launch app on each connected Android device/emulator, or raise a descriptive error if there are no connected devices
+
+## 0.7.1
+
 Released 2024-06-01
 
   - Update gradle plugin to launch app on each connected Android device/emulator, or raise a descriptive error if there are no connected devices
