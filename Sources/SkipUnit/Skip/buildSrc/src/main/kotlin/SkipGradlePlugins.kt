@@ -93,69 +93,82 @@ class SkipBuildPlugin : Plugin<Project> {
                 }
             }
 
+            data class DeviceInfo(val serialNumber: String, val deviceType: String)
+
+            /// Invoke `adb devices` and parse the output for the list of connected devices
+            fun invokeADBDevices() : List<DeviceInfo> {
+                val devicesOut = ByteArrayOutputStream()
+                exec {
+                    commandLine = listOf(
+                        "adb".withExecutableExtension(),
+                        "devices")
+                    standardOutput = devicesOut
+                }
+
+                //warn("running adb devices: ${devicesOut}")
+
+                val devicesOutString = devicesOut.toByteArray().toString(Charsets.UTF_8)
+                val devices = mutableListOf<DeviceInfo>()
+
+                val androidSerialsEnv = System.getenv("ANDROID_SERIAL")
+
+                devicesOutString.lines().forEach { line ->
+                    if (line.endsWith("\tdevice")) {
+                        val parts = line.split("\t")
+                        if (parts.size == 2) {
+                            val serialNumber = parts[0]
+                            val deviceType = parts[1]
+                            // if we have set the ANDROID_SERIAL environment, only add the
+                            // device to the list if it matches the serial number
+                            if (androidSerialsEnv == null || androidSerialsEnv.isEmpty() || androidSerialsEnv == serialNumber) {
+                                devices.add(DeviceInfo(serialNumber, deviceType))
+                            }
+                        }
+                    }
+                }
+
+                return devices
+            }
+
+            task("checkDevices") {
+                doFirst {
+                    val devices = invokeADBDevices()
+                    if (devices.size == 0) {
+                        error("No connected Android devices or emulators were reported by `adb devices`. To launch the Skip app, start an emulator from the Android Studio Device Manager or use the ~/Library/Android/sdk/emulator/emulator command")
+                    }
+                }
+            }
+
             // add the "launchDebug" and "launchRelease" commands
             listOf("Debug", "Release").forEach { buildType ->
                 task("launch" + buildType) {
-                    dependsOn("install" + buildType)
+                    dependsOn("checkDevices") // check the devices before install to report when there are no devices
+                    dependsOn("install" + buildType) // built-in install task
+
                     doLast {
-                        // if `skip devices` returns more than a single value, set ANDROID_SERIAL to one of them or allow customization
-                        val devicesOut = ByteArrayOutputStream()
-                        exec {
-                            commandLine = listOf(
-                                "adb".withExecutableExtension(),
-                                "devices")
-                            standardOutput = devicesOut
-                        }
+                        val devices = invokeADBDevices()
 
-                        //warn("running adb devices: ${devicesOut}")
-
-                        data class DeviceInfo(val serialNumber: String, val deviceType: String)
-
-                        val devicesOutString = devicesOut.toByteArray().toString(Charsets.UTF_8)
-                        val devices = mutableListOf<DeviceInfo>()
-
-                        val androidSerialsEnv = System.getenv("ANDROID_SERIAL")
-
-                        devicesOutString.lines().forEach { line ->
-                            if (line.endsWith("\tdevice")) {
-                                val parts = line.split("\t")
-                                if (parts.size == 2) {
-                                    val serialNumber = parts[0]
-                                    val deviceType = parts[1]
-                                    // if we have set the ANDROID_SERIAL environment, only add the
-                                    // device to the list if it matches the serial number
-                                    if (androidSerialsEnv == null || androidSerialsEnv.isEmpty() || androidSerialsEnv == serialNumber) {
-                                        devices.add(DeviceInfo(serialNumber, deviceType))
-                                    }
-                                }
-                            }
-                        }
-
-                        //warn("adb devices output: ${devicesOutString}")
-
-                        if (devices.size == 0) {
-                            error("No connected Android devices or emulators were reported by `adb devices`. To launch the app, start an emulator from the Android Studio Device Manager or use the ~/Library/Android/sdk/emulator/emulator command")
-                        } else if (devices.size > 1) {
+                        if (devices.size > 1) {
                             val serials = devices.map({ it.serialNumber }).joinToString(", ")
                             warn("Multiple connected devices were reported by `adb devices`. Will attempt to launch on each device/emulator: ${serials}")
                         }
 
                         devices.forEach { device ->
-                            info("launching app on device: ${device.serialNumber}")
+                            //warn("launching app ${activity} on device: ${device.serialNumber}")
                             exec {
                                 commandLine = listOf(
-                                    "adb".withExecutableExtension(),
-                                    "-s",
-                                    device.serialNumber,
-                                    "shell",
-                                    "am",
-                                    "start",
-                                    "-a",
-                                    "android.intent.action.MAIN",
-                                    "-c",
-                                    "android.intent.category.LAUNCHER",
-                                    "-n",
-                                    activity
+                                "adb".withExecutableExtension(),
+                                "-s",
+                                device.serialNumber,
+                                "shell",
+                                "am",
+                                "start",
+                                "-a",
+                                "android.intent.action.MAIN",
+                                "-c",
+                                "android.intent.category.LAUNCHER",
+                                "-n",
+                                activity
                                 )
                             }
                         }
