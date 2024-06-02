@@ -1,3 +1,9 @@
+## 0.7.2
+
+Released 2024-06-02
+
+  - Handle case where the output folder name does not match the Skip project name and provide a descriptive error
+
 ## 0.7.1
 
 Released 2024-06-02
