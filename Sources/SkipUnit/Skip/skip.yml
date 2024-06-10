@@ -94,7 +94,7 @@ build:
 
     - block: 'kotlin'
       contents:
-        - 'jvmToolchain(libs.versions.jvm.get().toInt())'
+        #- 'jvmToolchain(libs.versions.jvm.get().toInt())'
 
     - block: 'android'
       contents:
