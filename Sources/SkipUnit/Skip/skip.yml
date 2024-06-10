@@ -106,8 +106,8 @@ build:
             - 'testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"'
         - block: 'compileOptions'
           contents:
-            - 'sourceCompatibility = JavaVersion.toVersion(libs.versions.jvm.get())'
-            - 'targetCompatibility = JavaVersion.toVersion(libs.versions.jvm.get())'
+            #- 'sourceCompatibility = JavaVersion.toVersion(libs.versions.jvm.get())'
+            #- 'targetCompatibility = JavaVersion.toVersion(libs.versions.jvm.get())'
 
         - block: 'testOptions'
           contents:
