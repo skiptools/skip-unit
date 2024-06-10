@@ -1,3 +1,9 @@
+## 0.7.3
+
+Released 2024-06-10
+
+  - Remove forced requirement for jdk 21 jvmToolchain
+
 ## 0.7.2
 
 Released 2024-06-02
