@@ -43,7 +43,7 @@ These six modes of testing can be summarized by the following table:
 By default, Skip uses the simulated Robolectric Android environment to run your transpiled tests. To run them against an Android device or emulator instead, set the device or emulator ID in the `ANDROID_SERIAL` environment variable. This can be done either in the Xcode scheme's `Run` action arguments for the target, or as a standard environment variable when using the command line:
 
 ```shell
-> ANDROID_SERIAL=emulator-5554 swift tests
+> ANDROID_SERIAL=emulator-5554 swift test
 ```
 
 ## Writing Tests
