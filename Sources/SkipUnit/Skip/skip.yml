@@ -36,7 +36,7 @@ settings:
           contents:
             - block: 'create("libs")'
               contents:
-                - 'version("jvm", "21")'
+                - 'version("jvm", "17")'
                 - 'version("android-sdk-min", "29")'
                 - 'version("android-sdk-compile", "34")'
 
