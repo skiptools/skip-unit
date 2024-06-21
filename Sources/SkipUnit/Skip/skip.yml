@@ -108,6 +108,9 @@ build:
           contents:
             - 'sourceCompatibility = JavaVersion.toVersion(libs.versions.jvm.get())'
             - 'targetCompatibility = JavaVersion.toVersion(libs.versions.jvm.get())'
+        - block: 'kotlinOptions'
+          contents:
+            - 'jvmTarget = libs.versions.jvm.get().toString()'
 
         - block: 'testOptions'
           contents:
@@ -127,6 +130,7 @@ build:
         - block: 'kotlinOptions'
           contents:
             - 'suppressWarnings = true'
+            - 'jvmTarget = libs.versions.jvm.get().toString()'
 
     - block: 'publishing'
       contents:
