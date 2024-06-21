@@ -1,3 +1,11 @@
+## 0.7.5
+
+Released 2024-06-21
+
+  - Change target JVM version from 21 to 17 for Android Studio compatibility
+  - Add jvmTarget to kotlinOptions to harmonize with sourceCompatibility and targetCompatibility
+  - Update README.md
+
 ## 0.7.4
 
 Released 2024-06-10
