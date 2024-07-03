@@ -24,6 +24,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.Exec
 import org.gradle.api.initialization.Settings
+import org.gradle.api.plugins.ExtensionAware
 
 // the Skip.env configuration for a Skip app, with shared constants for Xcode and gradle
 val skipEnvFilename = "Skip.env"
@@ -38,16 +39,68 @@ class SkipBuildPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val logger: Logger = project.logger
         fun info(message: String) = logger.info(message)
-        // output in the standard Gradle warning format, which skip will parse and convert into an Xcode warning
-        fun warn(message: String) = logger.warn("w: file://:0:0 ${message}")
-        // output in the standard Gradle error format, which skip will parse and convert into an Xcode error
-        fun error(message: String) = logger.error("e: file://:0:0 ${message}")
 
-        // TODO: try to add the compose compiler plugin if it does not exist in the project
+        // output in the standard Gradle warning format, which skip will parse and convert into an Xcode warning
+        fun warn(message: String, path: String = "", line: Int = 0, column: Int = 0) = logger.warn("w: file://${path}:${line}:${column} ${message}")
+
+        // output in the standard Gradle error format, which skip will parse and convert into an Xcode error
+        fun error(message: String, path: String = "", line: Int = 0, column: Int = 0): Exception {
+            logger.error("e: file://${path}:${line}:${column} ${message}")
+            return RuntimeException(message)
+        }
+
+        fun findLine(startingWith: String, path: String): Int? {
+            val file = java.io.File(path)
+            if (!file.exists()) {
+                throw IllegalArgumentException("File at path $path does not exist")
+            }
+
+            file.useLines { lines ->
+                lines.forEachIndexed { index, line ->
+                    if (line.trim().startsWith(startingWith)) {
+                        return index + 1 // Line numbers start from 1
+                    }
+                }
+            }
+
+            return null
+        }
+
+        val buildFilePath = project.buildFile.absolutePath
+
+        var validationFailures = 0
+
+        // Try to add the compose compiler plugin if it does not exist in the project as part of the Kotlin 2 migration of existing projects
         // https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-compiler.html#migrating-a-compose-multiplatform-project
         // https://android-developers.googleblog.com/2024/04/jetpack-compose-compiler-moving-to-kotlin-repository.html
         if (!project.plugins.hasPlugin("org.jetbrains.kotlin.plugin.compose")) {
-            //project.plugins.apply("org.jetbrains.kotlin.plugin.compose")
+            // project.plugins.apply("org.jetbrains.kotlin.plugin.compose") // doesn't work: "Plugin with id 'org.jetbrains.kotlin.plugin.compose' not found"
+            error("Manual upgrade required for Android/app/build.gradle.kts: add line to plugins block: alias(libs.plugins.kotlin.compose) Details: https://skip.tools/docs/kotlin2-migration/", path = buildFilePath, line = findLine(startingWith = "plugins {", path = buildFilePath) ?: 0)
+            validationFailures += 1
+        }
+
+        // scan for android / composeOptions / kotlinCompilerExtensionVersion and raise an error
+        val androidExtension = project.extensions.findByName("android") as? ExtensionAware
+        if (androidExtension != null) {
+            val composeOptions = androidExtension.extensions.findByName("composeOptions")
+            if (composeOptions != null) {
+                // always null…
+            }
+        }
+
+        val kotlinCompilerExtensionVersionLine = findLine(startingWith = "kotlinCompilerExtensionVersion =", path = buildFilePath)
+        if (kotlinCompilerExtensionVersionLine != null) {
+            error("Manual upgrade required for Android/app/build.gradle.kts: remove the line kotlinCompilerExtensionVersion = … Details: https://skip.tools/docs/kotlin2-migration/", path = buildFilePath, line = kotlinCompilerExtensionVersionLine)
+            validationFailures += 1
+        }
+
+        if (findLine(startingWith = "jvmTarget = ", path = buildFilePath) == null) {
+            error("Manual upgrade required for Android/app/build.gradle.kts: android block should contain a kotlinOptions block with the line: jvmTarget = libs.versions.jvm.get().toString() Details: https://skip.tools/docs/kotlin2-migration/", path = buildFilePath)
+            validationFailures += 1
+        }
+
+        if (validationFailures > 0) {
+            throw error("Project validation errors (${validationFailures})")
         }
 
         this.project = project
