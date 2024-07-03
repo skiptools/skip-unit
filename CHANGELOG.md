@@ -1,3 +1,9 @@
+## 0.8.0
+
+Released 2024-07-03
+
+  - Update to Kotlin 2 and bump other dependencies; update skip-build plugin to raise errors about required updates needed to existing projects
+
 ## 0.7.5
 
 Released 2024-06-21
