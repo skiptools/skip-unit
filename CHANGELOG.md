@@ -1,3 +1,9 @@
+## 0.8.1
+
+Released 2024-07-03
+
+  - Bump skip-plugin com.android.tools.build version to 8.5.0
+
 ## 0.8.0
 
 Released 2024-07-03
