@@ -23,5 +23,5 @@ gradlePlugin {
 }
 
 dependencies {
-    compileOnly("com.android.tools.build:gradle:8.2.2")
+    compileOnly("com.android.tools.build:gradle:8.5.0")
 }
