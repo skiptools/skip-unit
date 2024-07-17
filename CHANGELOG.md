@@ -1,3 +1,9 @@
+## 0.8.2
+
+Released 2024-07-16
+
+  - Add check for destination folder to accomodate new SwiftPM plugin output folder
+
 ## 0.8.1
 
 Released 2024-07-03
