@@ -268,18 +268,26 @@ class SkipSettingsPlugin : Plugin<Settings> {
 
             // look in each of the output folders and return the first one for which the ModuleName/skipstone/ folder exists.
             // we used to use the SKIP_PROJECT_NAME project setting, but that requires that the Swift package app name was identical to the folder name in which the project resided, so this is more robust (at the cost of potentially having conflicting module names, if one should exist)
+            // Note that we need to check for "destination" as well, as SwiftPM6 added it to the plugin output folder for command-line builds
             val projectBaseDir = skipOutputs.listFiles().firstOrNull { path ->
                 //warn("checking skipOutputs child: ${path}")
                 path.resolve(swiftModuleName).resolve("skipstone").exists()
+                    || path.resolve(swiftModuleName).resolve("destination").resolve("skipstone").exists()
             }
 
             if (projectBaseDir == null) {
                 error("Could not locate transpiled module for ${swiftModuleName} in ${skipOutputs}. This may mean that the Skip project was not transpiled successfully. Check the gradle log for details and see https://skip.tools/docs/faq/ for troubleshooting.")
             } else {
-                val projectDir = projectBaseDir
+                var projectDir = projectBaseDir
                     .resolve(swiftModuleName)
                     .resolve("skipstone")
-
+                if (!projectDir.exists()) {
+                    // added for SwiftPM6 plugin output folder
+                    projectDir = projectBaseDir
+                        .resolve(swiftModuleName)
+                        .resolve("destination")
+                        .resolve("skipstone")
+                }
                 if (!projectDir.exists()) {
                     error("The folder at ${projectDir} does not exist. This may mean that the Skip project was not transpiled successfully, or the name of the project module is not unique in the packages that were created. Check the gradle log for details and see https://skip.tools/docs/faq/ for troubleshooting.")
                 }
