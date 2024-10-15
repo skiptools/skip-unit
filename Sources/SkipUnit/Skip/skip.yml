@@ -40,7 +40,7 @@ settings:
                 - 'version("android-sdk-min", "29")'
                 - 'version("android-sdk-compile", "34")'
 
-                - 'version("android-gradle-plugin", "8.5.0")'
+                - 'version("android-gradle-plugin", "8.7.0")'
                 - 'plugin("android-library", "com.android.library").versionRef("android-gradle-plugin")'
                 - 'plugin("android-application", "com.android.application").versionRef("android-gradle-plugin")'
 
@@ -49,7 +49,7 @@ settings:
                 - 'plugin("kotlin-compose", "org.jetbrains.kotlin.plugin.compose").versionRef("kotlin")'
                 - 'library("kotlin-bom", "org.jetbrains.kotlin", "kotlin-bom").versionRef("kotlin")'
 
-                - 'version("kotlin-coroutines", "1.8.1")'
+                - 'version("kotlin-coroutines", "1.9.0")'
                 - 'library("kotlinx-coroutines-core", "org.jetbrains.kotlinx", "kotlinx-coroutines-core").versionRef("kotlin-coroutines")'
                 - 'library("kotlinx-coroutines-android", "org.jetbrains.kotlinx", "kotlinx-coroutines-android").versionRef("kotlin-coroutines")'
 
@@ -69,6 +69,8 @@ settings:
                 - 'library("kotlin-test", "org.jetbrains.kotlin", "kotlin-test").withoutVersion()'
                 - 'library("kotlin-test-junit", "org.jetbrains.kotlin", "kotlin-test-junit").withoutVersion()'
 
+                - 'version("robolectric", "4.13")'
+                - 'library("robolectric", "org.robolectric", "robolectric").versionRef("robolectric")'
 
 # the blocks to add to the build.gradle.kts
 build:
@@ -80,7 +82,6 @@ build:
         - 'id("maven-publish")'
 
     - block: 'dependencies'
-      export: false
       contents:
         - 'api(platform(libs.kotlin.bom))'
         - 'compileOnly(testLibs.kotlin.test)'
@@ -88,6 +89,13 @@ build:
         - 'api(testLibs.androidx.test.runner)'
         - 'api(testLibs.kotlinx.coroutines.test)'
         - 'api(testLibs.kotlin.test.junit)'
+        - 'testImplementation(testLibs.robolectric)'
+        - 'testImplementation(testLibs.androidx.test.core)'
+        - 'testImplementation(testLibs.androidx.test.rules)'
+        - 'testImplementation(testLibs.androidx.test.ext.junit)'
+        - 'androidTestImplementation(testLibs.androidx.test.core)'
+        - 'androidTestImplementation(testLibs.androidx.test.rules)'
+        - 'androidTestImplementation(testLibs.androidx.test.ext.junit)'
 
     - block: 'android'
       contents:
@@ -117,6 +125,14 @@ build:
               contents:
                 - 'allVariants()'
                 - 'withSourcesJar()'
+
+    - block: 'tasks.withType<Test>().configureEach'
+      contents:
+        - 'systemProperties.put("robolectric.logging", "stdout")'
+        - 'systemProperties.put("robolectric.graphicsMode", "NATIVE")'
+        - block: 'testLogging'
+          contents:
+            - 'this.showStandardStreams = true'
 
     - block: 'tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>()'
       contents:
