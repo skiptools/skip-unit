@@ -2,29 +2,24 @@
 // under the terms of the GNU Lesser General Public License 3.0
 // as published by the Free Software Foundation https://fsf.org
 
-import org.gradle.api.*
-import org.gradle.api.initialization.*
+import org.gradle.api.GradleException
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.initialization.Settings
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Property
-import org.gradle.kotlin.dsl.add
+import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.withGroovyBuilder
+import org.gradle.process.ExecOperations
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileReader
 import java.nio.charset.Charset
-import java.util.Properties
-import java.util.regex.Pattern
-import com.android.build.gradle.BaseExtension
-import com.android.build.api.dsl.*
-import org.gradle.kotlin.dsl.*
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.api.logging.Logger
-import org.gradle.api.logging.Logging
-import org.gradle.api.tasks.Exec
-import org.gradle.api.initialization.Settings
-import org.gradle.api.plugins.ExtensionAware
+import java.util.*
+import javax.inject.Inject
 
 // the Skip.env configuration for a Skip app, with shared constants for Xcode and gradle
 val skipEnvFilename = "Skip.env"
@@ -33,7 +28,7 @@ interface SkipBuildExtension {
     val appName: Property<String>
 }
 
-class SkipBuildPlugin : Plugin<Project> {
+class SkipBuildPlugin @Inject constructor(private val os: ExecOperations) : Plugin<Project> {
     private var project: Project? = null
 
     override fun apply(project: Project) {
@@ -143,7 +138,7 @@ class SkipBuildPlugin : Plugin<Project> {
             /// Invoke `adb devices` and parse the output for the list of connected devices
             fun invokeADBDevices() : List<DeviceInfo> {
                 val devicesOut = ByteArrayOutputStream()
-                exec {
+                os.exec {
                     commandLine = listOf(
                         "adb".withExecutableExtension(),
                         "devices")
@@ -200,7 +195,7 @@ class SkipBuildPlugin : Plugin<Project> {
 
                         devices.forEach { device ->
                             //warn("launching app ${activity} on device: ${device.serialNumber}")
-                            exec {
+                            os.exec {
                                 commandLine = listOf(
                                 "adb".withExecutableExtension(),
                                 "-s",
