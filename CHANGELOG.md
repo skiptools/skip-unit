@@ -1,3 +1,10 @@
+## 1.1.1
+
+Released 2025-01-26
+
+  - Merge pull request #3 from DRSchlaubi/main
+  - Replace deprecated API call to Project#exec
+
 ## 1.0.1
 
 Released 2024-10-15
