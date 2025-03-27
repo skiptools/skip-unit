@@ -247,7 +247,11 @@ class SkipSettingsPlugin : Plugin<Settings> {
             val skipOutput = System.getenv("BUILT_PRODUCTS_DIR") ?: System.getProperty("BUILT_PRODUCTS_DIR")
             val skipOutputs: File = if (skipOutput != null) {
                 // BUILT_PRODUCTS_DIR is set when building from Xcode, in which case we will use Xcode's DerivedData plugin output folder for the build project
-                File(skipOutput).resolve("../../../SourcePackages/plugins/")
+                var outputs = File(skipOutput).resolve("../../../Build/Intermediates.noindex/BuildToolPluginIntermediates/") // Xcode 16.3+
+                if (!outputs.exists()) {
+                    outputs = File(skipOutput).resolve("../../../SourcePackages/plugins/") // Xcode 16.2-
+                }
+                outputs
             } else {
                 // SPM output folder is a peer of the parent Package.swift in the .build folder
                 buildDir.resolve("plugins/outputs/")
