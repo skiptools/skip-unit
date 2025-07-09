@@ -44,7 +44,7 @@ settings:
                 - 'plugin("android-library", "com.android.library").versionRef("android-gradle-plugin")'
                 - 'plugin("android-application", "com.android.application").versionRef("android-gradle-plugin")'
 
-                - 'version("kotlin", "2.0.0")'
+                - 'version("kotlin", "2.2.0")'
                 - 'plugin("kotlin-android", "org.jetbrains.kotlin.android").versionRef("kotlin")'
                 - 'plugin("kotlin-compose", "org.jetbrains.kotlin.plugin.compose").versionRef("kotlin")'
                 - 'library("kotlin-bom", "org.jetbrains.kotlin", "kotlin-bom").versionRef("kotlin")'
