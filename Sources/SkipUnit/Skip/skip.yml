@@ -109,9 +109,6 @@ build:
           contents:
             - 'sourceCompatibility = JavaVersion.toVersion(libs.versions.jvm.get())'
             - 'targetCompatibility = JavaVersion.toVersion(libs.versions.jvm.get())'
-        - block: 'kotlinOptions'
-          contents:
-            - 'jvmTarget = libs.versions.jvm.get().toString()'
 
         - block: 'testOptions'
           contents:
@@ -136,10 +133,12 @@ build:
         - block: 'filter'
           contents:
             - 'isFailOnNoMatchingTests = false'
-            # https://github.com/gradle/gradle/issues/33619
-            - block: 'if (GradleVersion.current() >= GradleVersion.version("9.0"))'
-              contents:
-                - 'failOnNoDiscoveredTests = false'
+            # Gradle 9.0 fails test runs when tests are not filtered and the property
+            # failOnNoDiscoveredTests = false is not set, but we cannot set it or we
+            # will break Gradle 8 compatibility. So instead we add a bogus exclude
+            # pattern in order to prevent test failures for modules that do not
+            # contain any tests (see https://github.com/gradle/gradle/issues/33619)
+            - 'excludeTestsMatching("NonExistingExcludePattern")'
 
     - block: 'tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>()'
       contents:
