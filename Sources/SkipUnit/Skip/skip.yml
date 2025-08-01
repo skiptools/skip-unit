@@ -37,7 +37,7 @@ settings:
             - block: 'create("libs")'
               contents:
                 - 'version("jvm", "17")'
-                - 'version("android-sdk-min", "29")'
+                - 'version("android-sdk-min", "28")'
                 - 'version("android-sdk-compile", "35")'
 
                 - 'version("android-gradle-plugin", "8.12.0")'
