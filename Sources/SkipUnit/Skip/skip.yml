@@ -37,7 +37,7 @@ settings:
             - block: 'create("libs")'
               contents:
                 - 'version("jvm", "17")'
-                - 'version("android-sdk-min", "29")'
+                - 'version("android-sdk-min", "26")'
                 - 'version("android-sdk-compile", "35")'
 
                 - 'version("android-gradle-plugin", "8.10.1")'
@@ -132,7 +132,11 @@ build:
         - 'systemProperties.put("robolectric.graphicsMode", "NATIVE")'
         - block: 'testLogging'
           contents:
-            - 'this.showStandardStreams = true'
+            - 'showStandardStreams = true'
+        - block: 'filter'
+          contents:
+            - 'isFailOnNoMatchingTests = false'
+            - 'failOnNoDiscoveredTests = false'
 
     - block: 'tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>()'
       contents:
