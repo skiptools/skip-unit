@@ -40,7 +40,7 @@ settings:
                 - 'version("android-sdk-min", "26")'
                 - 'version("android-sdk-compile", "35")'
 
-                - 'version("android-gradle-plugin", "8.10.1")'
+                - 'version("android-gradle-plugin", "8.12.0")'
                 - 'plugin("android-library", "com.android.library").versionRef("android-gradle-plugin")'
                 - 'plugin("android-application", "com.android.application").versionRef("android-gradle-plugin")'
 
@@ -69,7 +69,7 @@ settings:
                 - 'library("kotlin-test", "org.jetbrains.kotlin", "kotlin-test").withoutVersion()'
                 - 'library("kotlin-test-junit", "org.jetbrains.kotlin", "kotlin-test-junit").withoutVersion()'
 
-                - 'version("robolectric", "4.14.1")'
+                - 'version("robolectric", "4.15.1")'
                 - 'library("robolectric", "org.robolectric", "robolectric").versionRef("robolectric")'
 
 # the blocks to add to the build.gradle.kts
