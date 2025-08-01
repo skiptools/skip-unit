@@ -136,7 +136,10 @@ build:
         - block: 'filter'
           contents:
             - 'isFailOnNoMatchingTests = false'
-            - 'failOnNoDiscoveredTests = false'
+            # https://github.com/gradle/gradle/issues/33619
+            - block: 'if (GradleVersion.current() >= GradleVersion.version("9.0"))'
+              contents:
+                - 'failOnNoDiscoveredTests = false'
 
     - block: 'tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>()'
       contents:
