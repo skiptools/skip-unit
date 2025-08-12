@@ -1,10 +1,9 @@
 // Copyright 2023–2025 Skip
 // SPDX-License-Identifier: LGPL-3.0-only WITH LGPL-3.0-linking-exception
-#if os(macOS)
+#if os(macOS) || os(Linux)
 import SkipTest
 
 /// This test case will run the transpiled tests for the Skip module.
-@available(macOS 13, macCatalyst 16, *)
 final class XCSkipTests: XCTestCase, XCGradleHarness {
     public func testSkipModule() async throws {
         // Run the transpiled JUnit tests for the current test module.
