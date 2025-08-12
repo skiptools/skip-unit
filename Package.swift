@@ -12,6 +12,6 @@ let package = Package(
     ],
     targets: [
         .target(name: "SkipUnit", plugins: [.plugin(name: "skipstone", package: "skip")]),
-        .testTarget(name: "SkipUnitTests", dependencies: ["SkipUnit", .product(name: "SkipTest", package: "skip", condition: .when(platforms: [.macOS]))], plugins: [.plugin(name: "skipstone", package: "skip")]),
+        .testTarget(name: "SkipUnitTests", dependencies: ["SkipUnit", .product(name: "SkipTest", package: "skip", condition: .when(platforms: [.macOS, .linux]))], plugins: [.plugin(name: "skipstone", package: "skip")]),
     ]
 )
