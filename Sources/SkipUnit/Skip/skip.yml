@@ -105,6 +105,9 @@ build:
           contents:
             - 'minSdk = libs.versions.android.sdk.min.get().toInt()'
             - 'testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"'
+            # turn off the default analytics/telemetry setting for unit tests
+            # see: https://developer.android.com/training/testing/espresso/setup#analytics
+            - 'testInstrumentationRunnerArguments["disableAnalytics"] = "true"'
         - block: 'compileOptions'
           contents:
             - 'sourceCompatibility = JavaVersion.toVersion(libs.versions.jvm.get())'
