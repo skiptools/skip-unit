@@ -11,7 +11,7 @@ Combined with the Skip [transpiler](https://source.skip.dev/skip), this provides
 
 SkipUnit depends on the [skip](https://source.skip.dev/skip) transpiler plugin and has no additional library dependencies.
 
-It is part of the core *SkipStack* and is not intended to be imported directly.
+It is part of the *Skip Core Frameworks* and is not intended to be imported directly.
 The module is transparently adopted through the translation of `import XCUnit` into `import skip.unit.*` by the Skip transpiler.
 
 ## Parity Testing
