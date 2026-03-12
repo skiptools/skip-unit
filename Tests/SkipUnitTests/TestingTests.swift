@@ -3,7 +3,7 @@
 import Testing
 
 @Test func freestandingTests() {
-    #expect("free" != "standing")
+    #expect("swift" != "kotlin")
 }
 
 @Suite class TestingTests {
