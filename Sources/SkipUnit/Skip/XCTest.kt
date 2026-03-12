@@ -110,3 +110,70 @@ interface XCTestCase {
 
 	fun measure(block: () -> Unit) = block()
 }
+
+// MARK: Swift Testing assertion functions
+// These are the targets for transpiled #expect() and #require() macros.
+
+fun expectTrue(a: Boolean): Unit = org.junit.Assert.assertTrue(a)
+fun expectTrue(a: Boolean, msg: String): Unit = org.junit.Assert.assertTrue(msg, a)
+fun expectFalse(a: Boolean): Unit = org.junit.Assert.assertFalse(a)
+fun expectFalse(a: Boolean, msg: String): Unit = org.junit.Assert.assertFalse(msg, a)
+
+fun expectEqual(a: Any?, b: Any?): Unit = org.junit.Assert.assertEquals(b, a)
+fun expectEqual(a: Any?, b: Any?, msg: String): Unit = org.junit.Assert.assertEquals("${a} is not equal to ${b} – " + msg, b, a)
+fun <T : Comparable<T>> expectEqual(a: T?, b: T?): Unit = org.junit.Assert.assertTrue("${a} != ${b}", a == b)
+fun <T : Comparable<T>> expectEqual(a: T?, b: T?, msg: String): Unit = org.junit.Assert.assertTrue(msg, a == b)
+
+fun expectNotEqual(a: Any?, b: Any?): Unit = org.junit.Assert.assertNotEquals(b, a)
+fun expectNotEqual(a: Any?, b: Any?, msg: String): Unit = org.junit.Assert.assertNotEquals(msg, b, a)
+fun <T : Comparable<T>> expectNotEqual(a: T?, b: T?): Unit = org.junit.Assert.assertFalse("${a} == ${b}", a == b)
+fun <T : Comparable<T>> expectNotEqual(a: T?, b: T?, msg: String): Unit = org.junit.Assert.assertFalse(msg, a == b)
+
+fun <T : Comparable<T>> expectGreaterThan(a: T, b: T): Unit = org.junit.Assert.assertTrue("${a} !> ${b}", a > b)
+fun <T : Comparable<T>> expectGreaterThan(a: T, b: T, msg: String): Unit = org.junit.Assert.assertTrue(msg, a > b)
+fun <T : Comparable<T>> expectGreaterThanOrEqual(a: T, b: T): Unit = org.junit.Assert.assertTrue("${a} !>= ${b}", a >= b)
+fun <T : Comparable<T>> expectGreaterThanOrEqual(a: T, b: T, msg: String): Unit = org.junit.Assert.assertTrue(msg, a >= b)
+
+fun <T : Comparable<T>> expectLessThan(a: T, b: T): Unit = org.junit.Assert.assertTrue("${a} !< ${b}", a < b)
+fun <T : Comparable<T>> expectLessThan(a: T, b: T, msg: String): Unit = org.junit.Assert.assertTrue(msg, a < b)
+fun <T : Comparable<T>> expectLessThanOrEqual(a: T, b: T): Unit = org.junit.Assert.assertTrue("${a} !<= ${b}", a <= b)
+fun <T : Comparable<T>> expectLessThanOrEqual(a: T, b: T, msg: String): Unit = org.junit.Assert.assertTrue(msg, a <= b)
+
+fun expectNil(a: Any?): Unit = org.junit.Assert.assertNull(a)
+fun expectNil(a: Any?, msg: String): Unit = org.junit.Assert.assertNull(msg, a)
+fun <T> expectNotNil(a: T?): T { org.junit.Assert.assertNotNull(a); return a!! }
+fun <T> expectNotNil(a: T?, msg: String): T { org.junit.Assert.assertNotNull(msg, a); return a!! }
+
+fun <T : Throwable> expectThrows(`throws`: kotlin.reflect.KClass<T>, block: () -> Unit) {
+    try {
+        block()
+        org.junit.Assert.fail("Expected ${`throws`.simpleName} to be thrown")
+    } catch (e: Throwable) {
+        if (!`throws`.isInstance(e)) {
+            org.junit.Assert.fail("Expected ${`throws`.simpleName} but got ${e::class.simpleName}: ${e.message}")
+        }
+    }
+}
+
+fun requireTrue(a: Boolean): Unit = org.junit.Assert.assertTrue(a)
+fun requireTrue(a: Boolean, msg: String): Unit = org.junit.Assert.assertTrue(msg, a)
+
+fun requireEqual(a: Any?, b: Any?): Unit = org.junit.Assert.assertEquals(b, a)
+fun requireEqual(a: Any?, b: Any?, msg: String): Unit = org.junit.Assert.assertEquals("${a} is not equal to ${b} – " + msg, b, a)
+fun <T : Comparable<T>> requireEqual(a: T?, b: T?): Unit = org.junit.Assert.assertTrue("${a} != ${b}", a == b)
+fun <T : Comparable<T>> requireEqual(a: T?, b: T?, msg: String): Unit = org.junit.Assert.assertTrue(msg, a == b)
+
+fun requireNotEqual(a: Any?, b: Any?): Unit = org.junit.Assert.assertNotEquals(b, a)
+fun requireNotEqual(a: Any?, b: Any?, msg: String): Unit = org.junit.Assert.assertNotEquals(msg, b, a)
+
+fun <T : Comparable<T>> requireGreaterThan(a: T, b: T): Unit = org.junit.Assert.assertTrue("${a} !> ${b}", a > b)
+fun <T : Comparable<T>> requireGreaterThanOrEqual(a: T, b: T): Unit = org.junit.Assert.assertTrue("${a} !>= ${b}", a >= b)
+fun <T : Comparable<T>> requireLessThan(a: T, b: T): Unit = org.junit.Assert.assertTrue("${a} !< ${b}", a < b)
+fun <T : Comparable<T>> requireLessThanOrEqual(a: T, b: T): Unit = org.junit.Assert.assertTrue("${a} !<= ${b}", a <= b)
+
+fun <T> requireNotNil(a: T?): T { org.junit.Assert.assertNotNull(a); return a!! }
+fun <T> requireNotNil(a: T?, msg: String): T { org.junit.Assert.assertNotNull(msg, a); return a!! }
+
+fun <T : Throwable> requireThrows(`throws`: kotlin.reflect.KClass<T>, block: () -> Unit) {
+    expectThrows(`throws` = `throws`, block = block)
+}
