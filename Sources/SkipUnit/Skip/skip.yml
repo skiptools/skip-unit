@@ -69,7 +69,7 @@ settings:
                 - 'library("kotlin-test", "org.jetbrains.kotlin", "kotlin-test").withoutVersion()'
                 - 'library("kotlin-test-junit", "org.jetbrains.kotlin", "kotlin-test-junit").withoutVersion()'
 
-                - 'version("robolectric", "4.16")'
+                - 'version("robolectric", "4.16.1")'
                 - 'library("robolectric", "org.robolectric", "robolectric").versionRef("robolectric")'
 
 # the blocks to add to the build.gradle.kts
