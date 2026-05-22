@@ -75,6 +75,10 @@ settings:
                 - 'version("robolectric", "4.16.1")'
                 - 'library("robolectric", "org.robolectric", "robolectric").versionRef("robolectric")'
 
+                # explicit asm version until https://github.com/robolectric/robolectric/issues/11204
+                - 'version("asm", "9.10")'
+                - 'library("asm", "org.ow2.asm", "asm").versionRef("asm")'
+
 # the blocks to add to the build.gradle.kts
 build:
   contents:
@@ -92,6 +96,7 @@ build:
         - 'api(testLibs.androidx.test.runner)'
         - 'api(testLibs.kotlinx.coroutines.test)'
         - 'api(testLibs.kotlin.test.junit)'
+        - 'testImplementation(testLibs.asm)'
         - 'testImplementation(testLibs.robolectric)'
         - 'testImplementation(testLibs.androidx.test.core)'
         - 'testImplementation(testLibs.androidx.test.rules)'
