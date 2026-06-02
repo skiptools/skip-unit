@@ -34,7 +34,12 @@ settings:
         # constants for the version dependencies
         - block: 'versionCatalogs'
           contents:
+            # `merge: prepend` makes a leaf module's `version("...")` / `library("...")` /
+            # `plugin("...")` entries emit before these defaults, so leaf overrides actually win
+            # in Gradle's version catalog DSL (where the first registration of an alias wins and
+            # later ones are silently ignored).
             - block: 'create("libs")'
+              merge: 'prepend'
               contents:
                 - 'version("jvm", "17")'
                 - 'version("android-sdk-min", "28")'
@@ -61,6 +66,7 @@ settings:
                 - 'library("kotlinx-coroutines-android", "org.jetbrains.kotlinx", "kotlinx-coroutines-android").versionRef("kotlin-coroutines")'
 
             - block: 'create("testLibs")'
+              merge: 'prepend'
               contents:
                 - 'version("androidx-test", "1.6.1")'
                 - 'library("androidx-test-runner", "androidx.test", "runner").versionRef("androidx-test")'
