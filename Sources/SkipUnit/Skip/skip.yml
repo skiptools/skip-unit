@@ -43,7 +43,7 @@ settings:
               contents:
                 - 'version("jvm", "17")'
                 - 'version("android-sdk-min", "28")'
-                - 'version("android-sdk-compile", "36")'
+                - 'version("android-sdk-compile", "37")'
 
                 # keep android-gradle-plugin and kotlin versions in sync according to compatibility table at
                 # https://developer.android.com/build/kotlin-support
