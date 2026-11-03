@@ -54,9 +54,11 @@ settings:
 
                 - 'version("kotlin", "2.4.21")'
 
-                # AGP 9+ no longer needs (or supports) the org.jetbrains.kotlin.android plugin
+                # AGP 9+ no longer needs (or supports) applying the org.jetbrains.kotlin.android plugin,
+                # but it is still put on the classpath (`apply false`) so that the Kotlin compiler is
+                # the catalog's version instead of the older one AGP depends on
                 # https://developer.android.com/build/migrate-to-built-in-kotlin#migration-steps-remove-kotlin-android-plugin
-                #- 'plugin("kotlin-android", "org.jetbrains.kotlin.android").versionRef("kotlin")'
+                - 'plugin("kotlin-android", "org.jetbrains.kotlin.android").versionRef("kotlin")'
 
                 - 'plugin("kotlin-compose", "org.jetbrains.kotlin.plugin.compose").versionRef("kotlin")'
                 - 'library("kotlin-bom", "org.jetbrains.kotlin", "kotlin-bom").versionRef("kotlin")'
@@ -96,6 +98,7 @@ build:
       contents:
         # https://developer.android.com/build/migrate-to-built-in-kotlin#migration-steps-remove-kotlin-android-plugin
         #- 'alias(libs.plugins.kotlin.android)'
+        - 'alias(libs.plugins.kotlin.android) apply false'
         - 'alias(libs.plugins.android.library)'
         - 'id("maven-publish")'
 
