@@ -54,14 +54,15 @@ settings:
 
                 - 'version("kotlin", "2.4.21")'
 
-                # AGP 9+ no longer needs (or supports) applying the org.jetbrains.kotlin.android plugin,
-                # but it is still put on the classpath (`apply false`) so that the Kotlin compiler is
-                # the catalog's version instead of the older one AGP depends on
+                # AGP 9+ no longer needs (or supports) the org.jetbrains.kotlin.android plugin
                 # https://developer.android.com/build/migrate-to-built-in-kotlin#migration-steps-remove-kotlin-android-plugin
-                - 'plugin("kotlin-android", "org.jetbrains.kotlin.android").versionRef("kotlin")'
+                #- 'plugin("kotlin-android", "org.jetbrains.kotlin.android").versionRef("kotlin")'
 
                 - 'plugin("kotlin-compose", "org.jetbrains.kotlin.plugin.compose").versionRef("kotlin")'
                 - 'library("kotlin-bom", "org.jetbrains.kotlin", "kotlin-bom").versionRef("kotlin")'
+                # AGP 9 compiles with the KGP version it depends on unless a higher one is on the buildscript classpath
+                # https://developer.android.com/build/releases/agp-9-0-0-release-notes#runtime-dependency-on-kotlin-gradle-plugin
+                - 'library("kotlin-gradle-plugin", "org.jetbrains.kotlin", "kotlin-gradle-plugin").versionRef("kotlin")'
 
                 - 'version("kotlin-coroutines", "1.11.0")'
                 - 'library("kotlinx-coroutines-core", "org.jetbrains.kotlinx", "kotlinx-coroutines-core").versionRef("kotlin-coroutines")'
@@ -94,11 +95,16 @@ settings:
 # the blocks to add to the build.gradle.kts
 build:
   contents:
+    - block: 'buildscript'
+      contents:
+        - block: 'dependencies'
+          contents:
+            - 'classpath(libs.kotlin.gradle.plugin)'
+
     - block: 'plugins'
       contents:
         # https://developer.android.com/build/migrate-to-built-in-kotlin#migration-steps-remove-kotlin-android-plugin
         #- 'alias(libs.plugins.kotlin.android)'
-        - 'alias(libs.plugins.kotlin.android) apply false'
         - 'alias(libs.plugins.android.library)'
         - 'id("maven-publish")'
 
