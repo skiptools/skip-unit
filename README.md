@@ -184,9 +184,3 @@ internal class MyUnitTests: XCTestCase {
     internal fun testSomeLogic() = XCTAssertEqual(1 + 2, 3, "basic test")
 }
 ```
-
-
-## License
-
-This software is licensed under the 
-[Mozilla Public License 2.0](https://www.mozilla.org/MPL/).
