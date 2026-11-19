@@ -82,7 +82,7 @@ settings:
                 - 'library("kotlin-test", "org.jetbrains.kotlin", "kotlin-test").withoutVersion()'
                 - 'library("kotlin-test-junit", "org.jetbrains.kotlin", "kotlin-test-junit").withoutVersion()'
 
-                - 'version("robolectric", "4.16.1")'
+                - 'version("robolectric", "4.18.1")'
                 - 'library("robolectric", "org.robolectric", "robolectric").versionRef("robolectric")'
 
                 # explicit asm version until https://github.com/robolectric/robolectric/issues/11204
