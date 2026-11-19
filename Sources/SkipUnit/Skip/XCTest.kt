@@ -1,5 +1,4 @@
 // Copyright 2023–2026 Skip
-// SPDX-License-Identifier: MPL-2.0
 package skip.unit
 
 /// Alias for the @Test annotation to be able to use it without importing JUnit
