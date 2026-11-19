@@ -43,7 +43,7 @@ settings:
               contents:
                 - 'version("jvm", "17")'
                 - 'version("android-sdk-min", "28")'
-                - 'version("android-sdk-compile", "36")'
+                - 'version("android-sdk-compile", "37")'
 
                 # keep android-gradle-plugin and kotlin versions in sync according to compatibility table at
                 # https://developer.android.com/build/kotlin-support
@@ -82,7 +82,7 @@ settings:
                 - 'library("kotlin-test", "org.jetbrains.kotlin", "kotlin-test").withoutVersion()'
                 - 'library("kotlin-test-junit", "org.jetbrains.kotlin", "kotlin-test-junit").withoutVersion()'
 
-                - 'version("robolectric", "4.16.1")'
+                - 'version("robolectric", "4.18.1")'
                 - 'library("robolectric", "org.robolectric", "robolectric").versionRef("robolectric")'
 
                 # explicit asm version until https://github.com/robolectric/robolectric/issues/11204
