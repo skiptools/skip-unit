@@ -73,6 +73,12 @@ settings:
                 - 'library("androidx-test-core", "androidx.test", "core").versionRef("androidx-test")'
                 - 'library("androidx-test-rules", "androidx.test", "rules").versionRef("androidx-test")'
 
+                # pinned explicitly: androidx.compose.ui:ui-test pulls in espresso-core 3.5.0, which calls
+                # InputManager.getInstance(); that method is gone in Android SDK 37, so Robolectric/Compose UI
+                # tests fail with NoSuchMethodException. 3.7.0 uses getSystemService(InputManager) instead.
+                - 'version("androidx-test-espresso", "3.7.0")'
+                - 'library("androidx-test-espresso-core", "androidx.test.espresso", "espresso-core").versionRef("androidx-test-espresso")'
+
                 - 'version("androidx-test-ext-junit", "1.3.0")'
                 - 'library("androidx-test-ext-junit", "androidx.test.ext", "junit").versionRef("androidx-test-ext-junit")'
 
@@ -112,9 +118,11 @@ build:
         - 'testImplementation(testLibs.androidx.test.core)'
         - 'testImplementation(testLibs.androidx.test.rules)'
         - 'testImplementation(testLibs.androidx.test.ext.junit)'
+        - 'testImplementation(testLibs.androidx.test.espresso.core)'
         - 'androidTestImplementation(testLibs.androidx.test.core)'
         - 'androidTestImplementation(testLibs.androidx.test.rules)'
         - 'androidTestImplementation(testLibs.androidx.test.ext.junit)'
+        - 'androidTestImplementation(testLibs.androidx.test.espresso.core)'
 
     - block: 'android'
       contents:
