@@ -98,7 +98,22 @@ The following Swift Testing features are supported:
 - `#expect` with equality (`==`), inequality (`!=`), comparisons (`>`, `<`, `>=`, `<=`), and boolean expressions
 - `#require` for optional unwrapping
 
-Not all Swift Testing features are currently transpiled. Parameterized tests, traits, and tags are not supported.
+Not all Swift Testing features are currently transpiled. Traits and tags are not supported.
+
+### Parameterized tests
+
+`@Test(arguments:)` runs each argument as a separate test case with a fresh test instance.
+
+```swift
+@Test(arguments: [1, 2, 3])
+func positive(value: Int) {
+    #expect(value > 0)
+}
+```
+
+Collections of tuples and combinations of two collections are also supported, including async and throwing tests. Argument collections must not depend on instance state. Generic, variadic, and `inout` test parameters are not supported. Empty collections produce a skipped test.
+
+For suites with stored state, prefer a class with a single parameterless initializer. Transpiled structs can have additional constructors that JUnit does not support.
 
 **Note**: The Skip transpiler currently does not have access to the internal API of the module being tested. If you take advantage of Swift's `@testable imports` to exercise internal API, the transpiler will not be able to perform its usual type inference when translating your test code. This just means that you might have to be more explicit about types and to fully-qualify values (e.g. `MyType.value` instead of just `.value`) when unit testing internal API.
 

@@ -88,6 +88,9 @@ settings:
                 - 'library("kotlin-test", "org.jetbrains.kotlin", "kotlin-test").withoutVersion()'
                 - 'library("kotlin-test-junit", "org.jetbrains.kotlin", "kotlin-test-junit").withoutVersion()'
 
+                - 'version("test-parameter-injector", "1.25")'
+                - 'library("test-parameter-injector", "com.google.testparameterinjector", "test-parameter-injector").versionRef("test-parameter-injector")'
+
                 - 'version("robolectric", "4.18.1")'
                 - 'library("robolectric", "org.robolectric", "robolectric").versionRef("robolectric")'
 
@@ -113,6 +116,7 @@ build:
         - 'api(testLibs.androidx.test.runner)'
         - 'api(testLibs.kotlinx.coroutines.test)'
         - 'api(testLibs.kotlin.test.junit)'
+        - 'api(testLibs.test.parameter.injector)'
         - 'testImplementation(testLibs.asm)'
         - 'testImplementation(testLibs.robolectric)'
         - 'testImplementation(testLibs.androidx.test.core)'
@@ -154,6 +158,8 @@ build:
 
     - block: 'tasks.withType<Test>().configureEach'
       contents:
+        # Share one Robolectric sandbox between regular and parameterized tests.
+        - 'systemProperties.put("android.junit.runner", "org.robolectric.RobolectricTestParameterInjector")'
         - 'systemProperties.put("robolectric.logging", "stdout")'
         - 'systemProperties.put("robolectric.graphicsMode", "NATIVE")'
         - block: 'testLogging'
